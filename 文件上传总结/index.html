@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+
+
+<script type="text/javascript" color="0,0,255" opacity="0.7" zindex="-2" count="99" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="KbsMGM-cxbXLL8_ZMgd9HoISLGQPx2GAvxaINp0qzhQ">
+
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="iHKOwnN4RR">
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.ico?v=5.1.4">
+
+
+
+
+
+
+
+  <meta name="keywords" content="Web安全,文件上传,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="0x00漏洞原理与危害网站web应用都有一些文件上传功能，比如文档、图片、头像、视频上传，当上传功能的实现代码没有严格校验上传文件的后缀和文件类型，此时攻击者就可以上传一个webshell到一个web可访问的目录上，并将恶意文件传递给PHP解释器去执行，之后就可以在服务器上执行恶意代码，进行数据库执行、服务器文件管理，服务器命令执行等恶意操作。">
+<meta name="keywords" content="Web安全,文件上传">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文件上传总结">
+<meta property="og:url" content="http://www.lntro.xyz/文件上传总结/index.html">
+<meta property="og:site_name" content="风再起时">
+<meta property="og:description" content="0x00漏洞原理与危害网站web应用都有一些文件上传功能，比如文档、图片、头像、视频上传，当上传功能的实现代码没有严格校验上传文件的后缀和文件类型，此时攻击者就可以上传一个webshell到一个web可访问的目录上，并将恶意文件传递给PHP解释器去执行，之后就可以在服务器上执行恶意代码，进行数据库执行、服务器文件管理，服务器命令执行等恶意操作。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-03-17T12:13:16.952Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="文件上传总结">
+<meta name="twitter:description" content="0x00漏洞原理与危害网站web应用都有一些文件上传功能，比如文档、图片、头像、视频上传，当上传功能的实现代码没有严格校验上传文件的后缀和文件类型，此时攻击者就可以上传一个webshell到一个web可访问的目录上，并将恶意文件传递给PHP解释器去执行，之后就可以在服务器上执行恶意代码，进行数据库执行、服务器文件管理，服务器命令执行等恶意操作。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.lntro.xyz/文件上传总结/">
+
+
+
+
+
+  <title>文件上传总结 | 风再起时</title>
+  <style>
+  .forkme{
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .forkme{
+      display: inline;
+    }
+  }
+  </style>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?104760bf60098b3f7427cfbfb6fcefb6";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+  <div class="forkme">
+    <a href="https://github.com/1ntro"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+  </div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">风再起时</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">你看，整片星空都是我的</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.lntro.xyz/文件上传总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Intro">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://raw.githubusercontent.com/1ntro/image/master/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风再起时">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">文件上传总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-25T21:01:03+08:00">
+                2018-12-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/文件上传/" itemprop="url" rel="index">
+                    <span itemprop="name">文件上传</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="0x00漏洞原理与危害"><a href="#0x00漏洞原理与危害" class="headerlink" title="0x00漏洞原理与危害"></a>0x00漏洞原理与危害</h2><p>网站web应用都有一些文件上传功能，比如文档、图片、头像、视频上传，当上传功能的实现代码没有严格校验上传文件的后缀和文件类型，此时攻击者就可以上传一个webshell到一个web可访问的目录上，并将恶意文件传递给PHP解释器去执行，之后就可以在服务器上执行恶意代码，进行数据库执行、服务器文件管理，服务器命令执行等恶意操作。</p>
+<a id="more"></a>
+
+<p>根据网站使用及可解析的程序脚本不同，此处可以上传的恶意脚本可以是PHP、ASP、JSP文件，也可以是篡改后缀后的这几类脚本。</p>
+<p> WebShell 就是以 asp、php、jsp 或者 cgi 等网页文件形式存在的一种命令执行环境，也可以将其称之为 一种网页后门。攻击者在入侵了一个网站后，通常会将这些 asp 或 php 后门文件与网站服务器 web 目录 下正常的网页文件混在一起，然后使用浏览器来访问这些后门，得到一个命令执行环境，以达到控制网站服务器的目的(可以上传下载或者修改文件，操作数据库，执行任意命令等）。</p>
+<h2 id="0x01上传漏洞绕过"><a href="#0x01上传漏洞绕过" class="headerlink" title="0x01上传漏洞绕过"></a>0x01上传漏洞绕过</h2><h3 id="客户端JavaScript检查"><a href="#客户端JavaScript检查" class="headerlink" title="客户端JavaScript检查"></a>客户端JavaScript检查</h3><p>客户端检测一般只是在JavaScript代码中加入了对扩展名的黑白名单检查，这种方式只能防止一些普通用户上传错误，只要用burpsuite在文件上传时进行截断改文件后缀名就可绕过。</p>
+<h3 id="服务端检测"><a href="#服务端检测" class="headerlink" title="服务端检测"></a>服务端检测</h3><p>MIME类型的检查（就是检查Content-Type的值，MIME类型决定了某种扩展名用什么应用程序打开，GIF的MIME值为image/gif.）</p>
+<p>文件扩展名检查（与前端js后缀名检测类似，只不过是在后端进行检查，有时候还可以配合解析漏洞结合目录路径攻击，例如test.asp/test.jpg，解析漏洞后面会讲到）<br>后端后缀名检查也分两种，黑名单与白名单。</p>
+<p>黑名单检查绕过：</p>
+<p>1、文件名大小写绕过，比如代码中有php规则，那么可以使用PHP或者pHP绕过</p>
+<p>2、黑名单列表绕过，对黑名单列表中没有的扩展名进行攻击，比如asa</p>
+<p>3、利用windows和Linux系统的特性进行特殊文件名绕过，a.asp. a.asp_等</p>
+<p>4、htaccess 文件攻击</p>
+<p>建立一个<code>.htaccess</code>文件，编辑内容为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;FilesMatch &quot;lntro&quot;&gt;</span><br><span class="line">SetHandler application/x-httpd-php</span><br><span class="line">&lt;/FilesMatch&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这个时候就上传一个文件名字是lntro，这个时候我们上传一个文件名字叫做lntro的文件，不要后缀名，然后里面是一句话木马，用菜刀连接，可以成功！</p>
+<p>5、配合解析漏洞（IIS、apache等，后面会单独提到）</p>
+<p>白名单绕过：</p>
+<p>1、截断攻击，比如a.asp%00.gif等</p>
+<p>2、配合解析漏洞</p>
+<h3 id="目录路径的检查"><a href="#目录路径的检查" class="headerlink" title="目录路径的检查"></a>目录路径的检查</h3><p>对目录路径可进行0x00截断绕过；以及可以控制目录地址，上传文件夹的参数可控</p>
+<h3 id="检测文件内容是否包含恶意代码"><a href="#检测文件内容是否包含恶意代码" class="headerlink" title="检测文件内容是否包含恶意代码"></a>检测文件内容是否包含恶意代码</h3><p>这种方式主要检查图片文件的幻数，比如GIF的值为GIF89a，后端代码会检测改值判断是否为GIF图片文件，想要绕过只要在幻数后面加上一句话木马就行。</p>
+<p>其余还有文件相关信息的检查，文件加载检查</p>
+<h2 id="0x02上传文件的分类与总结"><a href="#0x02上传文件的分类与总结" class="headerlink" title="0x02上传文件的分类与总结"></a>0x02上传文件的分类与总结</h2><p>1、上传文件是PHP、JSP、ASP等脚本代码，服务器的Web容器解释并执行了用户上传的脚本，导致代码执行；</p>
+<p>2、上传文件是crossdomain.xml，导致可以控制Flash在该域下的行为(其他通过类似方式控制策略文件的情况类似);</p>
+<p>3、上传文件是病毒、木马文件，黑客用以诱骗用户或者管理员下载执行植入到pc中。</p>
+<p>4、上传文件是钓鱼图片或为包含了脚本的图片，在某些版本的浏览器中会被作为脚本执行，被用于钓鱼和欺诈。</p>
+<p>在大多数情况下，文件上传漏洞一般都是指“上传的Web脚本被服务器解析从而获取网站shell权限”，也就是webshell，要完成上传漏洞攻击需要满足以下几个条件:</p>
+<p>上传的文件能够被Web容器解释执行，所以文件上传后所在的目录需要解析器可以执行目录下的文件，也就是说文件目录必须在web容器覆盖路径内才行。</p>
+<p>用户可以直接通过浏览器进行访问这个shell文件，如果web容器不能解析这个文件，那么也不能算是漏洞。</p>
+<p>最后，上传的shell文件如果被安全检查、格式化、图片压缩等功能改变了内容，则也可能导致攻击不成功。</p>
+<h2 id="0x03修复与防御"><a href="#0x03修复与防御" class="headerlink" title="0x03修复与防御"></a>0x03修复与防御</h2><p>如何杜绝此类漏洞，其实需要根据攻击手段来分部进行，以上总结了如何绕过文件上传，实际上可以根据每种绕过手段针对的进行防御。</p>
+<p>1、设置文件上传的目录设置为不可执行</p>
+<p>2、使用白名单方式检查文件类型。处理图片可以使用压缩函数或者resize函数，在处理图片的同时破坏图片中可能包含的恶意代码。</p>
+<p>3、对文件进行随机性且不可猜解的重命名。</p>
+<p>4、不能有本地文件包含漏洞及解析漏洞。</p>
+<h2 id="0x04解析漏洞总结"><a href="#0x04解析漏洞总结" class="headerlink" title="0x04解析漏洞总结"></a>0x04解析漏洞总结</h2><p>常见的服务器有 IIS、apache、nginx，其中又分同一服务器不同版本的解析漏洞</p>
+<h3 id="IIS-5-x-6-0"><a href="#IIS-5-x-6-0" class="headerlink" title="IIS 5.x 6.0"></a>IIS 5.x 6.0</h3><p>目录解析</p>
+<p>example：<code>www.xxx.com/xxx.asp/xxx.jpg</code></p>
+<p>IIS服务器会把.asp .asa目录下的文件都解析成asp文件。其中xxx.jsp可以是任意后缀的文件，但是里面的内容是webshell脚本。</p>
+<p>文件解析</p>
+<p>example：<code>www.xxx.com/xxx.asp;.jpg</code></p>
+<p>分号后面的不解析，所以最后解析的文件就变成了xxx.asp</p>
+<p>IIS 6.0除了asp还可以解析 .asa .cer .cdx类型的文件</p>
+<p>例如：/xxx.asa/xxx.jpg, /xxx.cer/xxx.jpg, /xxx.cdx/xxx.jpg</p>
+<h3 id="IIS-7-0-IIS-7-5-Nginx-lt-8-03"><a href="#IIS-7-0-IIS-7-5-Nginx-lt-8-03" class="headerlink" title="IIS 7.0 IIS 7.5 Nginx &lt; 8.03"></a>IIS 7.0 IIS 7.5 Nginx &lt; 8.03</h3><p>在Fast-CGI开启的状态下，在类似xxx.jpg后面加上/xxx.php,变成/xxx.jpg/xxx.php路径会解析成PHP文件。</p>
+<p>将xxx.txt文本文件中的后门代码写入到xxx.jpg图片的二进制代码：<br>copy xxx.jpg/b + xxx.txt/a zzz.jpg</p>
+<p>xxx.txt的文件内容为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?PHP fputs(fopen(&apos;shell.php&apos;,&apos;w&apos;),&apos;&lt;?php eval($_POST[password])?&gt;&apos;);?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>然后访问 <a href="http://www.xxx.com/xxx.jpg/.php，就会在当前目录下生成一句话木马shell.php" target="_blank" rel="noopener">www.xxx.com/xxx.jpg/.php，就会在当前目录下生成一句话木马shell.php</a></p>
+<h3 id="nginx-lt-8-03-空字节代码执行漏洞"><a href="#nginx-lt-8-03-空字节代码执行漏洞" class="headerlink" title="nginx &lt; 8.03 空字节代码执行漏洞"></a>nginx &lt; 8.03 空字节代码执行漏洞</h3><p>在Fast-CGI关闭的状态下，文件路径 /xxx.jpg%00.php 会解析成PHP文件</p>
+<h3 id="IIS7-5解析漏洞"><a href="#IIS7-5解析漏洞" class="headerlink" title="IIS7.5解析漏洞"></a>IIS7.5解析漏洞</h3><p>这个漏洞与nginx的类似，在php配置文件中开启了cgi.fix_pathinfo，这是PHP的配置问题。</p>
+<h3 id="apache解析漏洞"><a href="#apache解析漏洞" class="headerlink" title="apache解析漏洞"></a>apache解析漏洞</h3><p>apache在解析类似 shell.php.xxx.rar的文件时，是从右往左开始解析，如果遇到不认识的后缀名，就在往左解析，rar无法解析，接着往左判断xxx也不可解析，最后到PHP后缀</p>
+<p><code>example：www.xxx.com/shell.php.xxx.rar</code></p>
+<p>除了PHP后缀外，php|php3|phtml也可以被apache解析</p>
+<h3 id="Windows绕过"><a href="#Windows绕过" class="headerlink" title="Windows绕过"></a>Windows绕过</h3><p>在windows操作系统下，xxx.jpg[空格]，xxx.jpg. 这两种命名方式，在win下会默认去掉空格和点，变成xxx.jpg格式。</p>
+<p>注：Linux可以允许此类命名文件存在。</p>
+<p>参考资料：</p>
+<p><a href="https://thief.one/2016/09/21/%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E/" target="_blank" rel="noopener">服务器解析漏洞</a></p>
+<p><a href="https://blog.csdn.net/wn314/article/details/77074477" target="_blank" rel="noopener">文件解析漏洞总结-Apache</a></p>
+<p><a href="https://blog.csdn.net/wn314/article/details/77388289" target="_blank" rel="noopener">文件解析漏洞总结-Nginx</a></p>
+<p><a href="https://blog.csdn.net/wn314/article/details/77388337" target="_blank" rel="noopener">文件解析漏洞总结-IIS</a></p>
+
+      
+    </div>
+    <div>
+      
+          <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">
+              -------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------
+        </div>
+    
+</div>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>谢谢您请我吃糖~</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="https://raw.githubusercontent.com/1ntro/image/master/wechat.png" alt="Intro 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="https://raw.githubusercontent.com/1ntro/image/master/pay.png" alt="Intro 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags"> 
+		  
+ 		    <a href="/tags/Web安全/" rel="tag"><i class="fa fa-tag"></i> Web安全</a> 
+		  
+ 		    <a href="/tags/文件上传/" rel="tag"><i class="fa fa-tag"></i> 文件上传</a> 
+		   
+		</div>
+		
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/SWPUCTF-2018-部分Web/" rel="next" title="SWPUCTF-2018-部分Web">
+                <i class="fa fa-chevron-left"></i> SWPUCTF-2018-部分Web
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/upload-labs学习/" rel="prev" title="upload-labs学习">
+                upload-labs学习 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MTUxNS8xODA2Mg=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://raw.githubusercontent.com/1ntro/image/master/avatar.jpg" alt="Intro">
+            
+              <p class="site-author-name" itemprop="name">Intro</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://paper.seebug.org/" title="Seebug" target="_blank">Seebug</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://github.com/CHYbeta/Web-Security-Learning" title="Web安全资源" target="_blank">Web安全资源</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.sec-wiki.com/skill/2" title="Web安全工程师" target="_blank">Web安全工程师</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00漏洞原理与危害"><span class="nav-number">1.</span> <span class="nav-text">0x00漏洞原理与危害</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01上传漏洞绕过"><span class="nav-number">2.</span> <span class="nav-text">0x01上传漏洞绕过</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#客户端JavaScript检查"><span class="nav-number">2.1.</span> <span class="nav-text">客户端JavaScript检查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务端检测"><span class="nav-number">2.2.</span> <span class="nav-text">服务端检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#目录路径的检查"><span class="nav-number">2.3.</span> <span class="nav-text">目录路径的检查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#检测文件内容是否包含恶意代码"><span class="nav-number">2.4.</span> <span class="nav-text">检测文件内容是否包含恶意代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02上传文件的分类与总结"><span class="nav-number">3.</span> <span class="nav-text">0x02上传文件的分类与总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03修复与防御"><span class="nav-number">4.</span> <span class="nav-text">0x03修复与防御</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04解析漏洞总结"><span class="nav-number">5.</span> <span class="nav-text">0x04解析漏洞总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IIS-5-x-6-0"><span class="nav-number">5.1.</span> <span class="nav-text">IIS 5.x 6.0</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IIS-7-0-IIS-7-5-Nginx-lt-8-03"><span class="nav-number">5.2.</span> <span class="nav-text">IIS 7.0 IIS 7.5 Nginx &lt; 8.03</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nginx-lt-8-03-空字节代码执行漏洞"><span class="nav-number">5.3.</span> <span class="nav-text">nginx &lt; 8.03 空字节代码执行漏洞</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IIS7-5解析漏洞"><span class="nav-number">5.4.</span> <span class="nav-text">IIS7.5解析漏洞</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#apache解析漏洞"><span class="nav-number">5.5.</span> <span class="nav-text">apache解析漏洞</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Windows绕过"><span class="nav-number">5.6.</span> <span class="nav-text">Windows绕过</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Intro</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+<div>
+<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+<script>
+    var now = new Date();
+    function createtime() {
+        var grt= new Date("02/08/2018 19:14:00");
+        now.setTime(now.getTime()+250);
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;}
+        document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 ";
+        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+setInterval("createtime()",250);
+</script>
+</div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

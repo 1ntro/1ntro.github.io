@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="SQL介绍SQLI，sql injection，我们称之为SQL注入。何为SQL，英文：StructuredQueryLanguage， 叫做结构化查询语言。常见的结构化数据库有 MySQL，MSSQL,Oracle 以及 Postgresql。Sql 语言就是我们在管理数据库时用到的一种。在我们的应用系统使用 sql 语句进行管理应用数 据库时，往往采用拼接的方式形成一条完整的数据库语言，而危险">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQL注入">
+<meta property="og:url" content="https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/index.html">
+<meta property="og:site_name" content="Intro&#39; Blog">
+<meta property="og:description" content="SQL介绍SQLI，sql injection，我们称之为SQL注入。何为SQL，英文：StructuredQueryLanguage， 叫做结构化查询语言。常见的结构化数据库有 MySQL，MSSQL,Oracle 以及 Postgresql。Sql 语言就是我们在管理数据库时用到的一种。在我们的应用系统使用 sql 语句进行管理应用数 据库时，往往采用拼接的方式形成一条完整的数据库语言，而危险">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2018-02-21T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-29T09:36:31.817Z">
+<meta property="article:author" content="Intro">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>SQL注入</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2018/02/27/XXE%E6%BC%8F%E6%B4%9E%E6%94%BB%E5%87%BB/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2018/02/08/Hexo%20Github%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/&text=SQL注入"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/&title=SQL注入"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/&is_video=false&description=SQL注入"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=SQL注入&body=Check out this article: https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/&title=SQL注入"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/&title=SQL注入"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/&title=SQL注入"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/&title=SQL注入"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/&name=SQL注入&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/&t=SQL注入"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        SQL注入
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Intro</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-02-21T16:00:00.000Z" class="dt-published" itemprop="datePublished">2018-02-22</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>SQL介绍SQLI，sql injection，我们称之为SQL注入。何为SQL，英文：StructuredQueryLanguage， 叫做结构化查询语言。常见的结构化数据库有 MySQL，MSSQL,Oracle 以及 Postgresql。Sql 语言就是我们在管理数据库时用到的一种。在我们的应用系统使用 sql 语句进行管理应用数 据库时，往往采用拼接的方式形成一条完整的数据库语言，而危险的是，在拼接 sql 语句的 时候，我们可以改变 sql 语句。从而让数据执行我们想要执行的语句，这就是我们常说的 sql 注入。注入的分类基于从服务器接收到的响应</p>
+<ul>
+<li>基于错误的SQL注入</li>
+<li>联合查询的类型</li>
+<li>堆查询注射</li>
+<li>SQL盲注<br>基于布尔SQL盲注<br>基于时间的SQL盲注<br>基于报错的SQL盲注</li>
+</ul>
+<p>基于如何处理输入的SQL查询（数据类型）</p>
+<ul>
+<li>基于字符串</li>
+<li>数字或整数为基础的</li>
+</ul>
+<p>基于程度和顺序的注入</p>
+<ul>
+<li>一阶注射</li>
+<li>二阶注射<br>一阶注射是指输入的注射语句对WEB直接产生了影响，出现了结果；二阶注入类似储存型XSS，是指输入提交的语句，无法直接对WEB应用程序产生影响，通过其他的辅助间接的对WEB产生危害，称为二阶注入。</li>
+</ul>
+<p>基于注入点的位置上的</p>
+<ul>
+<li>通过用户输入的表单域的注射。</li>
+<li>通过cookie注射。</li>
+<li>通过服务器变量注射。（基于头部信息的注射）</li>
+</ul>
+<p>常用的几个函数介绍几个常用函数：</p>
+<ol>
+<li>version() –MySQL版本</li>
+<li>user() –数据库用户名</li>
+<li>database() –数据库名</li>
+<li>@@datadir –数据库路径</li>
+<li>@@version_compile_os –操作系统版本</li>
+<li>concat(str1,str2,…) –没有分隔符地连接字符串</li>
+<li>concat_ws(separator,str1,str2,…) –含有分隔符地连接字符串</li>
+<li>group_concat(str1,str2,…) –连接一个组的所有字符串，并以逗号分隔每一条数据</li>
+<li>一般用于尝试的语句：<ul>
+<li>or 1&#x3D;1–+</li>
+<li>‘or 1&#x3D;1–+</li>
+<li>“or 1&#x3D;1–+</li>
+<li>)or 1&#x3D;1–+</li>
+<li>‘)or 1&#x3D;1–+</li>
+<li>“)or 1&#x3D;1–+</li>
+<li>“))or 1&#x3D;1–+</li>
+</ul>
+</li>
+</ol>
+<p>注入攻击流程判断注入点找到注入点是最关键也是最基础的一个环节，找到一个需要后台处理提交给数据库的点，只要和数据库有交互的输入，都有可能触发SQL注入一般有三大类：<code>GET</code>、<code>POST</code>、<code>Cookie</code>三个参数触发形如<code>http://localhost/test.php/?id=1</code>这样的url或者有输入框的验证是否存在注入点，最常见的方法</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3</code></td>
+<td><code>http://localhost/test.php/?id=1&#39;   //返回错误说明有可能注入 http://localhost/test.php/?id=1&#39; and 1=1   //返回正常 http://localhost/test.php/?id=1&#39; and 1=2    //返回错误</code></td>
+</tr>
+</tbody></table>
+<p>判断注入类型数字型注入点假设网站的SQL查询语句如下：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>$id=$_GET[&#39;id&#39;]; $sql=&quot;SELECT * FROM users WHERE id=$id&quot;;</code></td>
+</tr>
+</tbody></table>
+<p>测试方法：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>http://localhost/test.php/?id=1 and 1=1 返回成功 http://localhost/test.php/?id=1 and 1=2 返回失败</code></td>
+</tr>
+</tbody></table>
+<p>字符型注入点和数字型类似的：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>$id=$_GET[&#39;id&#39;]; $sql=&quot;SELECT * FROM users WHERE id=&#39;$id&#39;&quot;;</code></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>http://localhost/test.php/?id=1&#39; and &#39;1&#39;=&#39;1 返回成功 http://localhost/test.php/?id=1&#39; and &#39;1&#39;=&#39;2 返回失败</code></td>
+</tr>
+</tbody></table>
+<p>搜索型注入点这里提一下SQL语句中<code>LIKE</code>操作符，其含有通配符<code>%</code>（多个字符）和<code>_</code>（单个字符）可以进行字符匹配查询数据，例如查询姓刘的人可以用<code>LIKE 刘%</code>其查询语句一般为：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>$id=$_GET[&#39;id&#39;]; $sql=&quot;SELECT * FROM users WHERE id like&#39;%$id%&#39;&quot;;</code></td>
+</tr>
+</tbody></table>
+<p>测试方法：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>http://localhost/test.php/?id=web%&#39; and 1=1 and &#39;%&#39;=&#39;返回成功 http://localhost/test.php/?id=web%&#39; and 1=2 and &#39;%&#39;=&#39;返回失败</code></td>
+</tr>
+</tbody></table>
+<p>因为<code>and</code>逻辑，只要一个条件不满足，就返回错误，所以其语句变成了<code>SELECT * FROM users WHERE id like&#39;%web%&#39;and 1=1 and &#39;%&#39;=&#39;%&#39;</code>内联式SQL注入一般是登陆页面出现的，其SQL查询语句类似：<code>SELECT * FROM admin WHER username=&#39;$name&#39; AND password =&#39;$passwd&#39;</code>如果过滤输入不严格的话我们只需要提交<code>1&#39;or &#39;1&#39;=&#39;</code>就可以直接绕过登陆进入系统终止式SQL注入（最常用）终止式SQL注入是指我们在注入SQL代码时，将不需要被执行的代码注释掉，从而执行我们想要的查询，拿上面那个例子来说，如果我们在<code>username</code>提交<code>1&#39;or 1=1--+</code>那么查询语句就变成了<code>SELECT * FROM admin WHER username=&#39;1&#39;or 1=1--+ AND password =&#39;$passwd&#39;</code>我们注意到<code>--+</code>后面的代码都被注释掉从而并没有执行，这样同样达到了绕过的目的。终止字符串：<code>--+，#，%23，%00，/*</code></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/&text=SQL注入"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/&title=SQL注入"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/&is_video=false&description=SQL注入"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=SQL注入&body=Check out this article: https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/&title=SQL注入"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/&title=SQL注入"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/&title=SQL注入"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/&title=SQL注入"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/&name=SQL注入&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://1ntro.github.io/2018/02/22/SQL%E6%B3%A8%E5%85%A5/&t=SQL注入"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Intro
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="环境配置  靶机下载地址：https:&#x2F;&#x2F;download.vulnhub.com&#x2F;blackmarket&#x2F;BlackMarket.zip网络配置为NAT模式  实操首先上NMAP找到靶机ip，探测其端口还是先从WEB端入手，访问192.168.1.133发现一个简单的登陆界面从源码中发现flag1，其内容类似BASE64加密尝试解密得到CIA - Operation Treadstone，应该是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VulnHub BlackMarket靶机渗透">
+<meta property="og:url" content="https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/index.html">
+<meta property="og:site_name" content="Intro&#39; Blog">
+<meta property="og:description" content="环境配置  靶机下载地址：https:&#x2F;&#x2F;download.vulnhub.com&#x2F;blackmarket&#x2F;BlackMarket.zip网络配置为NAT模式  实操首先上NMAP找到靶机ip，探测其端口还是先从WEB端入手，访问192.168.1.133发现一个简单的登陆界面从源码中发现flag1，其内容类似BASE64加密尝试解密得到CIA - Operation Treadstone，应该是">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-5.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-6.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-7.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-8.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-9.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-10.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-11.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-12.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-13.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-14.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-15.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-16.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-17.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-20.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-18.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-19.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-21.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-22.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-23.png">
+<meta property="article:published_time" content="2018-12-18T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-29T10:14:58.044Z">
+<meta property="article:author" content="Intro">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>VulnHub BlackMarket靶机渗透</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2018/12/22/SWPUCTF%202018%20%E9%83%A8%E5%88%86Web/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2018/12/07/vulnhub%20DeRPnStiNK%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/&text=VulnHub BlackMarket靶机渗透"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/&title=VulnHub BlackMarket靶机渗透"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/&is_video=false&description=VulnHub BlackMarket靶机渗透"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=VulnHub BlackMarket靶机渗透&body=Check out this article: https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/&title=VulnHub BlackMarket靶机渗透"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/&title=VulnHub BlackMarket靶机渗透"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/&title=VulnHub BlackMarket靶机渗透"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/&title=VulnHub BlackMarket靶机渗透"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/&name=VulnHub BlackMarket靶机渗透&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/&t=VulnHub BlackMarket靶机渗透"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        VulnHub BlackMarket靶机渗透
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Intro</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-12-18T16:00:00.000Z" class="dt-published" itemprop="datePublished">2018-12-19</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>环境配置</p>
+<blockquote>
+<p>靶机下载地址：<a target="_blank" rel="noopener" href="https://download.vulnhub.com/blackmarket/BlackMarket.zip">https://download.vulnhub.com/blackmarket/BlackMarket.zip</a><br>网络配置为NAT模式</p>
+</blockquote>
+<p>实操首先上NMAP<br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-1.png"><br>找到靶机ip，探测其端口<br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-2.png"><br>还是先从WEB端入手，访问<code>192.168.1.133</code>发现一个简单的登陆界面<br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-3.png"><br>从源码中发现flag1，其内容类似BASE64加密<br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-4.png"><br>尝试解密得到<code>CIA - Operation Treadstone</code>，应该是某种提示，搜索后得到一个网站<code>http://bourne.wikia.com/wiki/Operation_Treadstone</code>，使用cewl爬取网站来生成字典<br><code>cewl -d -m 3 -v -w /root/list.txt http://bourne.wikia.com/wiki/Operation_Treadstone</code><br>查看字典<br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-5.png"><br>然后用hydra来爆破FTP，得到账号密码<code>nicky/CIA</code><br>登陆FTP，得到flag2<br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-6.png"><br>解密flag中的字段，得到提示：恭喜更进一步（并没有什么用）<br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-7.png"><br>那么尝试扫描网站后台，利用Kali自带的工具<code>dirb</code><br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-8.png"><br>发现supplier目录，尝试用<code>supplier/supplier</code>登陆系统，登陆成功！<br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-9.png"><br>直接切换到admin路径，发现能够进入（supplier的权限足够大），然后修改Users&#x2F;Customer的信息,发现每个用户对应的id值不同，user为2，可以想到admin应该为1<br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-10.png"><br>利用burpsuite抓包，改包修改id&#x3D;1以及username和password的值<br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-11.png"><br>用修改之后的值<code>admin/123</code>登陆后得到flag4，解密flag中的值为<code>nothing is here</code>，那就再看<code>Jason Bourne Email access?????</code>应该是要找到这个人的email地址，这种东西一般在存储在数据库中，猜测是要SQL注入<br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-12.png"><br>利用sqlmap的post注入，得到flag3，提示我们找到<code>Email access</code>，根据flag4的提示，一下就想到密码应该是<code>?????</code><br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-13.png"><br>根据之前扫的后台中有一个<code>squirrelmail</code>，经过多次尝试最后账号确认为<code>jbourne</code><br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-14.png"><br>在Draft中找到flag5，BASE64解密flag的值提示<code>Everything is encrypted</code>，那么应该要将下面message的信息解密<br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-15.png"><br>解密得到<code>Hi Dimitri If you are reading this I might be not alive. I have place a backdoor in Blackmarket workshop under /kgbbackdoor folder you must have to PassPass.jpg in order to hack in it.</code>提示<code>/kgbackdoor</code>目录有一个后门，最后在<code>vworkshop/kgbbackdoor/</code>目录下找到：<br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-16.png"><br>下载后，用WinHex打开，在末尾找到<code>pass = 5215565757312090656</code><br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-17.png"><br>将上述密码简单转换下得到真正的密码：<code>HailKGB</code><br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-20.png"><br>拿到密码下一步就是找到后门地址，尝试<code>http://192.168.1.133/vworkshop/kgbbackdoor/backdoor.php</code>，找到隐藏的input标签<br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-18.png"><br>输入密码成功登陆后门shell，得到flag6（Root time）<br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-19.png"><br>然后反弹shell<br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-21.png"><br>可以加一条命令<code>python -c &quot;import pty;pty.spawn(&#39;/bin/bash&#39;)&quot;</code><br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-22.png"><br>最后用脏牛提权，emmm这里废了很多功夫，找了很多EXP，放一个成功的<a target="_blank" rel="noopener" href="https://www.exploit-db.com/exploits/40616">https://www.exploit-db.com/exploits/40616</a><br><img src="https://raw.githubusercontent.com/1ntro/image/master/blackmarket-23.png"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/&text=VulnHub BlackMarket靶机渗透"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/&title=VulnHub BlackMarket靶机渗透"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/&is_video=false&description=VulnHub BlackMarket靶机渗透"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=VulnHub BlackMarket靶机渗透&body=Check out this article: https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/&title=VulnHub BlackMarket靶机渗透"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/&title=VulnHub BlackMarket靶机渗透"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/&title=VulnHub BlackMarket靶机渗透"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/&title=VulnHub BlackMarket靶机渗透"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/&name=VulnHub BlackMarket靶机渗透&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://1ntro.github.io/2018/12/19/VulnHub%20BlackMarket%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/&t=VulnHub BlackMarket靶机渗透"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Intro
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

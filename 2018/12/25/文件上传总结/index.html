@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="0x00漏洞原理与危害网站web应用都有一些文件上传功能，比如文档、图片、头像、视频上传，当上传功能的实现代码没有严格校验上传文件的后缀和文件类型，此时攻击者就可以上传一个webshell到一个web可访问的目录上，并将恶意文件传递给PHP解释器去执行，之后就可以在服务器上执行恶意代码，进行数据库执行、服务器文件管理，服务器命令执行等恶意操作。根据网站使用及可解析的程序脚本不同，此处可以上传的恶意">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文件上传总结">
+<meta property="og:url" content="https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Intro&#39; Blog">
+<meta property="og:description" content="0x00漏洞原理与危害网站web应用都有一些文件上传功能，比如文档、图片、头像、视频上传，当上传功能的实现代码没有严格校验上传文件的后缀和文件类型，此时攻击者就可以上传一个webshell到一个web可访问的目录上，并将恶意文件传递给PHP解释器去执行，之后就可以在服务器上执行恶意代码，进行数据库执行、服务器文件管理，服务器命令执行等恶意操作。根据网站使用及可解析的程序脚本不同，此处可以上传的恶意">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2018-12-24T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-29T09:27:50.260Z">
+<meta property="article:author" content="Intro">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>文件上传总结</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019/01/02/upload%20labs%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2018/12/22/SWPUCTF%202018%20%E9%83%A8%E5%88%86Web/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/&text=文件上传总结"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/&title=文件上传总结"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/&is_video=false&description=文件上传总结"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=文件上传总结&body=Check out this article: https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/&title=文件上传总结"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/&title=文件上传总结"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/&title=文件上传总结"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/&title=文件上传总结"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/&name=文件上传总结&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/&t=文件上传总结"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        文件上传总结
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Intro</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-12-24T16:00:00.000Z" class="dt-published" itemprop="datePublished">2018-12-25</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>0x00漏洞原理与危害网站web应用都有一些文件上传功能，比如文档、图片、头像、视频上传，当上传功能的实现代码没有严格校验上传文件的后缀和文件类型，此时攻击者就可以上传一个webshell到一个web可访问的目录上，并将恶意文件传递给PHP解释器去执行，之后就可以在服务器上执行恶意代码，进行数据库执行、服务器文件管理，服务器命令执行等恶意操作。根据网站使用及可解析的程序脚本不同，此处可以上传的恶意脚本可以是PHP、ASP、JSP文件，也可以是篡改后缀后的这几类脚本。WebShell 就是以 asp、php、jsp 或者 cgi 等网页文件形式存在的一种命令执行环境，也可以将其称之为 一种网页后门。攻击者在入侵了一个网站后，通常会将这些 asp 或 php 后门文件与网站服务器 web 目录 下正常的网页文件混在一起，然后使用浏览器来访问这些后门，得到一个命令执行环境，以达到控制网站服务器的目的(可以上传下载或者修改文件，操作数据库，执行任意命令等）。0x01上传漏洞绕过客户端JavaScript检查客户端检测一般只是在JavaScript代码中加入了对扩展名的黑白名单检查，这种方式只能防止一些普通用户上传错误，只要用burpsuite在文件上传时进行截断改文件后缀名就可绕过。服务端检测MIME类型的检查（就是检查Content-Type的值，MIME类型决定了某种扩展名用什么应用程序打开，GIF的MIME值为image&#x2F;gif.）文件扩展名检查（与前端js后缀名检测类似，只不过是在后端进行检查，有时候还可以配合解析漏洞结合目录路径攻击，例如test.asp&#x2F;test.jpg，解析漏洞后面会讲到）<br>后端后缀名检查也分两种，黑名单与白名单。黑名单检查绕过：1、文件名大小写绕过，比如代码中有php规则，那么可以使用PHP或者pHP绕过2、黑名单列表绕过，对黑名单列表中没有的扩展名进行攻击，比如asa3、利用windows和Linux系统的特性进行特殊文件名绕过，a.asp. a.asp_等4、htaccess 文件攻击建立一个<code>.htaccess</code>文件，编辑内容为：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3</code></td>
+<td><code>&lt;FilesMatch &quot;lntro&quot;&gt; SetHandler application/x-httpd-php &lt;/FilesMatch&gt;</code></td>
+</tr>
+</tbody></table>
+<p>这个时候就上传一个文件名字是lntro，这个时候我们上传一个文件名字叫做lntro的文件，不要后缀名，然后里面是一句话木马，用菜刀连接，可以成功！5、配合解析漏洞（IIS、apache等，后面会单独提到）白名单绕过：1、截断攻击，比如a.asp%00.gif等2、配合解析漏洞目录路径的检查对目录路径可进行0x00截断绕过；以及可以控制目录地址，上传文件夹的参数可控检测文件内容是否包含恶意代码这种方式主要检查图片文件的幻数，比如GIF的值为GIF89a，后端代码会检测改值判断是否为GIF图片文件，想要绕过只要在幻数后面加上一句话木马就行。其余还有文件相关信息的检查，文件加载检查0x02上传文件的分类与总结1、上传文件是PHP、JSP、ASP等脚本代码，服务器的Web容器解释并执行了用户上传的脚本，导致代码执行；2、上传文件是crossdomain.xml，导致可以控制Flash在该域下的行为(其他通过类似方式控制策略文件的情况类似);3、上传文件是病毒、木马文件，黑客用以诱骗用户或者管理员下载执行植入到pc中。4、上传文件是钓鱼图片或为包含了脚本的图片，在某些版本的浏览器中会被作为脚本执行，被用于钓鱼和欺诈。在大多数情况下，文件上传漏洞一般都是指“上传的Web脚本被服务器解析从而获取网站shell权限”，也就是webshell，要完成上传漏洞攻击需要满足以下几个条件:上传的文件能够被Web容器解释执行，所以文件上传后所在的目录需要解析器可以执行目录下的文件，也就是说文件目录必须在web容器覆盖路径内才行。用户可以直接通过浏览器进行访问这个shell文件，如果web容器不能解析这个文件，那么也不能算是漏洞。最后，上传的shell文件如果被安全检查、格式化、图片压缩等功能改变了内容，则也可能导致攻击不成功。0x03修复与防御如何杜绝此类漏洞，其实需要根据攻击手段来分部进行，以上总结了如何绕过文件上传，实际上可以根据每种绕过手段针对的进行防御。1、设置文件上传的目录设置为不可执行2、使用白名单方式检查文件类型。处理图片可以使用压缩函数或者resize函数，在处理图片的同时破坏图片中可能包含的恶意代码。3、对文件进行随机性且不可猜解的重命名。4、不能有本地文件包含漏洞及解析漏洞。0x04解析漏洞总结常见的服务器有 IIS、apache、nginx，其中又分同一服务器不同版本的解析漏洞IIS 5.x 6.0目录解析example：<code>www.xxx.com/xxx.asp/xxx.jpg</code>IIS服务器会把.asp .asa目录下的文件都解析成asp文件。其中xxx.jsp可以是任意后缀的文件，但是里面的内容是webshell脚本。文件解析example：<code>www.xxx.com/xxx.asp;.jpg</code>分号后面的不解析，所以最后解析的文件就变成了xxx.aspIIS 6.0除了asp还可以解析 .asa .cer .cdx类型的文件例如：&#x2F;xxx.asa&#x2F;xxx.jpg, &#x2F;xxx.cer&#x2F;xxx.jpg, &#x2F;xxx.cdx&#x2F;xxx.jpgIIS 7.0 IIS 7.5 Nginx &lt; 8.03在Fast-CGI开启的状态下，在类似xxx.jpg后面加上&#x2F;xxx.php,变成&#x2F;xxx.jpg&#x2F;xxx.php路径会解析成PHP文件。将xxx.txt文本文件中的后门代码写入到xxx.jpg图片的二进制代码：<br>copy xxx.jpg&#x2F;b + xxx.txt&#x2F;a zzz.jpgxxx.txt的文件内容为：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1</code></td>
+<td><code>&lt;?PHP fputs(fopen(&#39;shell.php&#39;,&#39;w&#39;),&#39;&lt;?php eval($_POST[password])?&gt;&#39;);?&gt;</code></td>
+</tr>
+</tbody></table>
+<p>然后访问 <a target="_blank" rel="noopener" href="http://www.xxx.com/xxx.jpg/.php%EF%BC%8C%E5%B0%B1%E4%BC%9A%E5%9C%A8%E5%BD%93%E5%89%8D%E7%9B%AE%E5%BD%95%E4%B8%8B%E7%94%9F%E6%88%90%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%ACshell.php">www.xxx.com/xxx.jpg/.php，就会在当前目录下生成一句话木马shell.php</a>nginx &lt; 8.03 空字节代码执行漏洞在Fast-CGI关闭的状态下，文件路径 &#x2F;xxx.jpg%00.php 会解析成PHP文件IIS7.5解析漏洞这个漏洞与nginx的类似，在php配置文件中开启了cgi.fix_pathinfo，这是PHP的配置问题。apache解析漏洞apache在解析类似 shell.php.xxx.rar的文件时，是从右往左开始解析，如果遇到不认识的后缀名，就在往左解析，rar无法解析，接着往左判断xxx也不可解析，最后到PHP后缀<code>example：www.xxx.com/shell.php.xxx.rar</code>除了PHP后缀外，php|php3|phtml也可以被apache解析Windows绕过在windows操作系统下，xxx.jpg[空格]，xxx.jpg. 这两种命名方式，在win下会默认去掉空格和点，变成xxx.jpg格式。注：Linux可以允许此类命名文件存在。参考资料：<a target="_blank" rel="noopener" href="https://thief.one/2016/09/21/%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E/">服务器解析漏洞</a><a target="_blank" rel="noopener" href="https://blog.csdn.net/wn314/article/details/77074477">文件解析漏洞总结-Apache</a><a target="_blank" rel="noopener" href="https://blog.csdn.net/wn314/article/details/77388289">文件解析漏洞总结-Nginx</a><a target="_blank" rel="noopener" href="https://blog.csdn.net/wn314/article/details/77388337">文件解析漏洞总结-IIS</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/&text=文件上传总结"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/&title=文件上传总结"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/&is_video=false&description=文件上传总结"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=文件上传总结&body=Check out this article: https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/&title=文件上传总结"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/&title=文件上传总结"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/&title=文件上传总结"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/&title=文件上传总结"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/&name=文件上传总结&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://1ntro.github.io/2018/12/25/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/&t=文件上传总结"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Intro
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

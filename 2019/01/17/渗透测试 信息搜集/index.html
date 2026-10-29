@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="0x00 whois信息whois信息可以获取关键注册人的信息，包括注册公司、注册邮箱、管理员邮箱、联系电话等。0x01 子域名渗透测试时一般主站的防御很强，子站才是重要的突破口，所以搜集子域名对渗透测试有很大的帮助0x02 目标IP很多网站都加了CDN，虚假的IP会干扰我们的测试，所以寻找真实IP显得尤为重要。  判断是否有CDN的方法，通过在线的多地ping，通过每个地区ping的结果的得到I">
+<meta property="og:type" content="article">
+<meta property="og:title" content="渗透测试 信息搜集">
+<meta property="og:url" content="https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/index.html">
+<meta property="og:site_name" content="Intro&#39; Blog">
+<meta property="og:description" content="0x00 whois信息whois信息可以获取关键注册人的信息，包括注册公司、注册邮箱、管理员邮箱、联系电话等。0x01 子域名渗透测试时一般主站的防御很强，子站才是重要的突破口，所以搜集子域名对渗透测试有很大的帮助0x02 目标IP很多网站都加了CDN，虚假的IP会干扰我们的测试，所以寻找真实IP显得尤为重要。  判断是否有CDN的方法，通过在线的多地ping，通过每个地区ping的结果的得到I">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-01-16T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-29T10:15:40.247Z">
+<meta property="article:author" content="Intro">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>渗透测试 信息搜集</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2019/03/01/Billu%20b0x%E9%9D%B6%E6%9C%BA%E6%B8%97%E9%80%8F/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2019/01/02/upload%20labs%E5%AD%A6%E4%B9%A0/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/&text=渗透测试 信息搜集"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/&title=渗透测试 信息搜集"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/&is_video=false&description=渗透测试 信息搜集"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=渗透测试 信息搜集&body=Check out this article: https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/&title=渗透测试 信息搜集"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/&title=渗透测试 信息搜集"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/&title=渗透测试 信息搜集"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/&title=渗透测试 信息搜集"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/&name=渗透测试 信息搜集&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/&t=渗透测试 信息搜集"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        渗透测试 信息搜集
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Intro</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-01-16T16:00:00.000Z" class="dt-published" itemprop="datePublished">2019-01-17</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>0x00 whois信息whois信息可以获取关键注册人的信息，包括注册公司、注册邮箱、管理员邮箱、联系电话等。0x01 子域名渗透测试时一般主站的防御很强，子站才是重要的突破口，所以搜集子域名对渗透测试有很大的帮助0x02 目标IP很多网站都加了CDN，虚假的IP会干扰我们的测试，所以寻找真实IP显得尤为重要。</p>
+<ol>
+<li>判断是否有CDN的方法，通过在线的多地ping，通过每个地区ping的结果的得到IP，如果这些IP一致，极大可能不存在CDN，如果这些IP大多不太一样或规律性很强，尝试查询这些IP的归属地</li>
+<li>验证IP和域名是否真实对应，修改hosts文件，将域名与IP解析对应</li>
+<li>获取真实IP，<strong>二级域名法</strong>，查看分站，确定没有使用CDN的二级域名，修改hosts将ip与目标域名绑定，能够访问说明目标站与二级域名在同一服务器也可能在同C段；<strong>国外访问</strong>，国外市场几乎不做CDN,所以通过国外代理访问或者找国外的比较偏僻的DNS解析服务器进行DNS查询就能得到真实IP</li>
+</ol>
+<p>0x03 旁站C段查询旁站是和目标网站在同一台服务器上的其它的网站；如果从目标站本身找不到好的入手点，这时候，如果想快速拿下目标的话，一般都会先找个目标站点所在服务器上其他的比较好搞的站下手，然后再想办法跨到真正目标的站点目录中。C段是和目标机器ip处在同一个C段的其它机器；通过目标所在C段的其他任一台机器，想办法跨到我们的目标机器上。常用的工具有webscancc，Nmap，Zenmap。0x04 指纹识别主要是主机系统的识别，网站程序的识别，cms等。目标CMS是十分重要的信息，CMS识别方式有网站特有文件，网站独有文件的md5，网站命名规则，返回头的关键字，url特征，meta特征，script特征，robots.txt，网站路径特征，网站静态资源，爬取网站目录信息0x05 敏感目录&#x2F;文件主要几种途径：搜索引擎：google hack语法暴力破解：御剑、dirb源码泄露：常见有.git文件泄露，.svn文件泄露，.DB_store文件泄露，WEB-INF&#x2F;web.xml泄露0x06邮件信息首先确定目标的邮件服务器所在的真实位置，看看邮件服务器自身有没有什么错误配置，比如，没有禁用VREY或者EXPN命令导致用户信息泄露。然后从whois中获取域名的注册人、管理员邮箱，利用搜索引擎或者社工库查看有木有泄露的密码，然后尝试泄露的密码进行登录，最后从目标站点上搜集邮箱，例如网站上的联系我们,我们发发邮件钓鱼什么的。常用的工具有kali下的theharester。0x07 端口信息服务和安全是相对应的，每开启一个端口攻击面就大了一点，扫描全端口一般使用Nmap</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51</code></td>
+<td><code>端口号	   端口服务/协议简要说明	       关于端口可能的一些渗透用途 tcp 20,21    ftp 默认的数据和命令传输端口[可明文亦可加密传输]  允许匿名的上传下载,爆破,嗅探,win提权,远程执行(proftpd 1.3.5),各类后门(proftpd,vsftp 2.3.4) tcp 22	ssh[数据ssl加密传输]	可根据已搜集到的信息尝试爆破,v1版本可中间人,ssh隧道及内网代理转发,文件传输,等等…常用于linux远程管理… tcp 23	telnet[明文传输]	爆破,嗅探,一般常用于路由,交换登陆,可尝试弱口令,也许会有意想不到的收获 tcp 25	smtp[简单邮件传输协议,多数linux发行版可能会默认开启此服务]	邮件伪造,vrfy/expn 查询邮件用户信息,可使用smtp-user-enum工具来自动跑 tcp/udp 53	dns[域名解析]	允许区域传送,dns劫持,缓存投毒,欺骗以及各种基于dns隧道的远控 tcp/udp 69	tftp[简单文件传输协议,无认证]	尝试下载目标及其的各类重要配置文件 tcp 80-89,443,8440-8450,8080-8089	web[各种常用的web服务端口]	各种常用web服务端口,可尝试经典的top n,vpn,owa,webmail,目标oa,各类java控制台,各类服务器web管理面板,各类web中间件漏洞利用,各类web框架漏洞利用等等…… tcp 110	[邮局协议,可明文可密文]	可尝试爆破,嗅探 tcp 137,139,445	samba[smb实现windows和linux间文件共享,明文]	可尝试爆破以及smb自身的各种远程执行类漏洞利用,如,ms08-067,ms17-010,嗅探等…… tcp 143	imap[可明文可密文]	可尝试爆破 udp 161	snmp[明文]	爆破默认团队字符串,搜集目标内网信息 tcp 389	ldap[轻量级目录访问协议]	ldap注入,允许匿名访问,弱口令 tcp 512,513,514	linux rexec	可爆破,rlogin登陆 tcp 873	rsync备份服务	匿名访问,文件上传 tcp 1194	openvpn	想办法钓vpn账号,进内网 tcp 1352	Lotus domino邮件服务	弱口令,信息泄漏,爆破 tcp 1433	mssql数据库	注入,提权,sa弱口令,爆破 tcp 1521	oracle数据库	tns爆破,注入,弹shell… tcp 1500	ispmanager 主机控制面板	弱口令 tcp 1025,111,2049	nfs	权限配置不当 tcp 1723	pptp	爆破,想办法钓vpn账号,进内网 tcp 2082,2083	cpanel主机管理面板登录	弱口令 tcp 2181	zookeeper	未授权访问 tcp 2601,2604	zebra路由	默认密码zerbra tcp 3128	squid代理服务	弱口令 tcp 3312,3311	kangle主机管理登录	弱口令 tcp 3306	mysql数据库	注入,提权,爆破 tcp 3389	windows rdp远程桌面	shift后门[需要03以下的系统],爆破,ms12-020[蓝屏exp] tcp 4848	glassfish控制台	弱口令 tcp 4899	radmin远程桌面管理工具,现在已经非常非常少了	抓密码拓展机器 tcp 5000	sybase/DB2数据库	爆破,注入 tcp 5432	postgresql数据库	爆破,注入,弱口令 tcp 5632	pcanywhere远程桌面管理工具	抓密码,代码执行,已经快退出历史舞台了 tcp 5900,5901,5902	vnc远程桌面管理工具	弱口令爆破,如果信息搜集不到位,成功几率很小 tcp 5984	CouchDB	未授权导致的任意指令执行 tcp 6379	redis未授权	可尝试未授权访问,弱口令爆破 tcp 7001,7002	weblogic控制台	java反序列化,弱口令 tcp 7778	kloxo	主机面板登录 tcp 8000	Ajenti主机控制面板	弱口令 tcp 8443	plesk主机控制面板	弱口令 tcp 8069	zabbix	远程执行,sql注入 tcp 8080-8089	Jenkins,jboss	反序列化,控制台弱口令 tcp 9080-9081,9090	websphere控制台	java反序列化/弱口令 tcp 9200,9300	elasticsearch	远程执行 tcp 10000	webmin linux主机web控制面板入口	弱口令 tcp 11211	memcached	未授权访问 tcp 27017,27018	mongodb	爆破,未授权访问 tcp 3690	svn服务	svn泄露,未授权访问 tcp 50000	SAP Management Console	远程执行 tcp 50070,50030	hadoop	默认端口未授权访问</code></td>
+</tr>
+</tbody></table>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/&text=渗透测试 信息搜集"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/&title=渗透测试 信息搜集"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/&is_video=false&description=渗透测试 信息搜集"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=渗透测试 信息搜集&body=Check out this article: https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/&title=渗透测试 信息搜集"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/&title=渗透测试 信息搜集"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/&title=渗透测试 信息搜集"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/&title=渗透测试 信息搜集"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/&name=渗透测试 信息搜集&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://1ntro.github.io/2019/01/17/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%20%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/&t=渗透测试 信息搜集"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Intro
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/1ntro">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
